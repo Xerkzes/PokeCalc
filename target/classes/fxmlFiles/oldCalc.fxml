@@ -1,0 +1,1098 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.Cursor?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
+
+<ScrollPane fitToHeight="true" fitToWidth="true" prefHeight="830.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controller.oldCalcController">
+   <content>
+      <BorderPane>
+         <top>
+            <AnchorPane>
+               <children>
+                  <Button mnemonicParsing="false" onAction="#backToMenu" text="Back" AnchorPane.leftAnchor="20.0" AnchorPane.topAnchor="10.0" />
+                  <HBox alignment="CENTER" prefHeight="29.0" prefWidth="600.0" spacing="10.0" AnchorPane.leftAnchor="80.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="10.0">
+                     <children>
+                        <Button mnemonicParsing="false" onAction="#damagePercentage" text="\%" translateX="-40.0" />
+                        <Button mnemonicParsing="false" onAction="#damageFlat" text="Flat" translateX="-40.0" />
+                     </children>
+                  </HBox>
+                  <Separator layoutX="148.0" layoutY="54.0" prefWidth="200.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="50.0" />
+                  <GridPane layoutY="54.0" AnchorPane.leftAnchor="20.0" AnchorPane.topAnchor="54.0">
+                    <columnConstraints>
+                      <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="100.0" minWidth="10.0" prefWidth="85.0" />
+                      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="150.0" />
+                    </columnConstraints>
+                    <rowConstraints>
+                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                    </rowConstraints>
+                     <children>
+                        <Label fx:id="userMove1Attack" text="(No Move)" />
+                        <Label fx:id="userMove1Damage" text="0 - 0%" GridPane.columnIndex="1">
+                           <GridPane.margin>
+                              <Insets left="5.0" />
+                           </GridPane.margin>
+                        </Label>
+                        <Label fx:id="userMove2Attack" text="(No Move)" GridPane.rowIndex="1" />
+                        <Label fx:id="userMove2Damage" text="0 - 0%" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                           <GridPane.margin>
+                              <Insets left="5.0" />
+                           </GridPane.margin>
+                        </Label>
+                        <Label fx:id="userMove3Attack" text="(No Move)" GridPane.rowIndex="2" />
+                        <Label fx:id="userMove3Damage" text="0 - 0%" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                           <GridPane.margin>
+                              <Insets left="5.0" />
+                           </GridPane.margin>
+                        </Label>
+                        <Label fx:id="userMove4Attack" text="(No Move)" GridPane.rowIndex="3" />
+                        <Label fx:id="userMove4Damage" text="0 - 0%" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                           <GridPane.margin>
+                              <Insets left="5.0" />
+                           </GridPane.margin>
+                        </Label>
+                     </children>
+                  </GridPane>
+                  <GridPane layoutX="400.0" layoutY="54.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="54.0">
+                     <columnConstraints>
+                        <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" minWidth="10.0" prefWidth="150.0" />
+                        <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="100.0" minWidth="10.0" prefWidth="85.0" />
+                     </columnConstraints>
+                     <rowConstraints>
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                     </rowConstraints>
+                     <children>
+                        <Label fx:id="foeMove1Attack" text="(No Move)" GridPane.columnIndex="1">
+                           <GridPane.margin>
+                              <Insets left="5.0" />
+                           </GridPane.margin>
+                        </Label>
+                        <Label fx:id="foeMove1Damage" text="0 - 0%">
+                           <GridPane.margin>
+                              <Insets right="5.0" />
+                           </GridPane.margin>
+                        </Label>
+                        <Label fx:id="foeMove2Damage" text="0 - 0%" GridPane.rowIndex="1">
+                           <GridPane.margin>
+                              <Insets right="5.0" />
+                           </GridPane.margin>
+                        </Label>
+                        <Label fx:id="foeMove2Attack" text="(No Move)" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                           <GridPane.margin>
+                              <Insets left="5.0" />
+                           </GridPane.margin>
+                        </Label>
+                        <Label fx:id="foeMove3Damage" text="0 - 0%" GridPane.rowIndex="2">
+                           <GridPane.margin>
+                              <Insets right="5.0" />
+                           </GridPane.margin>
+                        </Label>
+                        <Label fx:id="foeMove3Attack" text="(No Move)" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                           <GridPane.margin>
+                              <Insets left="5.0" />
+                           </GridPane.margin>
+                        </Label>
+                        <Label fx:id="foeMove4Damage" text="0 - 0%" GridPane.rowIndex="3">
+                           <GridPane.margin>
+                              <Insets right="5.0" />
+                           </GridPane.margin>
+                        </Label>
+                        <Label fx:id="foeMove4Attack" text="(No Move)" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                           <GridPane.margin>
+                              <Insets left="5.0" />
+                           </GridPane.margin>
+                        </Label>
+                     </children>
+                  </GridPane>
+               </children>
+               <BorderPane.margin>
+                  <Insets />
+               </BorderPane.margin>
+               <padding>
+                  <Insets bottom="10.0" />
+               </padding>
+            </AnchorPane>
+         </top>
+         <center>
+            <SplitPane dividerPositions="0.3042168674698795, 0.6616465863453815" prefHeight="160.0" prefWidth="200.0">
+              <items>
+                  <VBox minWidth="320.0" style="-fx-background-color: lightblue;">
+                     <children>
+                        <HBox alignment="CENTER" spacing="20.0">
+                           <children>
+                              <Button minWidth="50.0" mnemonicParsing="false" onAction="#getUserBox" text="Box" />
+                              <Button minWidth="50.0" mnemonicParsing="false" onAction="#getUserPokemonStats" text="Stats" />
+                           </children>
+                           <VBox.margin>
+                              <Insets bottom="10.0" top="10.0" />
+                           </VBox.margin>
+                        </HBox>
+                        <Separator prefWidth="200.0">
+                           <opaqueInsets>
+                              <Insets />
+                           </opaqueInsets>
+                           <VBox.margin>
+                              <Insets />
+                           </VBox.margin></Separator>
+                        <HBox alignment="CENTER" spacing="5.0">
+                           <children>
+                              <Label fx:id="userPokemon1" maxHeight="30.0" maxWidth="30.0" minHeight="30.0" minWidth="30.0" onMouseClicked="#clickedUserPokemon1" styleClass="pokeballBackground" stylesheets="@../CSS/style.css" />
+                              <Label fx:id="userPokemon2" maxHeight="30.0" maxWidth="30.0" minHeight="30.0" minWidth="30.0" onMouseClicked="#clickedUserPokemon2" styleClass="pokeballBackground" stylesheets="@../CSS/style.css" />
+                              <Label fx:id="userPokemon3" maxHeight="30.0" maxWidth="30.0" minHeight="30.0" minWidth="30.0" onMouseClicked="#clickedUserPokemon3" styleClass="pokeballBackground" stylesheets="@../CSS/style.css" />
+                              <Label fx:id="userPokemon4" maxHeight="30.0" maxWidth="30.0" minHeight="30.0" minWidth="30.0" onMouseClicked="#clickedUserPokemon4" styleClass="pokeballBackground" stylesheets="@../CSS/style.css" />
+                              <Label fx:id="userPokemon5" maxHeight="30.0" maxWidth="30.0" minHeight="30.0" minWidth="30.0" onMouseClicked="#clickedUserPokemon5" styleClass="pokeballBackground" stylesheets="@../CSS/style.css" />
+                              <Label fx:id="userPokemon6" maxHeight="30.0" maxWidth="30.0" minHeight="30.0" minWidth="30.0" onMouseClicked="#clickedUserPokemon6" styleClass="pokeballBackground" stylesheets="@../CSS/style.css" />
+                           </children>
+                           <VBox.margin>
+                              <Insets bottom="5.0" top="5.0" />
+                           </VBox.margin>
+                        </HBox>
+                        <Separator prefWidth="200.0" />
+                        <AnchorPane prefHeight="200.0" prefWidth="200.0">
+                           <children>
+                              <VBox fx:id="UserPokemonVBox" prefHeight="200.0" prefWidth="100.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                 <children>
+                                    <HBox alignment="CENTER">
+                                       <children>
+                                          <Button disable="true" mnemonicParsing="false" onAction="#addPokemon" style="-fx-text-fill: rgb(255, 255, 255); -fx-background-color: rgb(142,255,0); -fx-background-radius: 20;" text="➕" />
+                                       </children>
+                                       <opaqueInsets>
+                                          <Insets />
+                                       </opaqueInsets>
+                                       <VBox.margin>
+                                          <Insets top="10.0" />
+                                       </VBox.margin>
+                                    </HBox>
+                                    <FlowPane fx:id="UserPokemons" hgap="10.0" vgap="10.0">
+                                       <opaqueInsets>
+                                          <Insets />
+                                       </opaqueInsets>
+                                       <VBox.margin>
+                                          <Insets left="10.0" right="10.0" top="10.0" />
+                                       </VBox.margin>
+                                    </FlowPane>
+                                 </children>
+                              </VBox>
+                              <VBox fx:id="UserVBoxStats" prefHeight="527.0" prefWidth="300.0" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                 <children>
+                                    <HBox alignment="CENTER_LEFT" prefWidth="300.0">
+                                       <children>
+                                          <Label minWidth="50.0" text="Type">
+                                             <HBox.margin>
+                                                <Insets left="10.0" />
+                                             </HBox.margin>
+                                          </Label>
+                                          <ComboBox fx:id="UserPokemonType1" maxWidth="100.0" onAction="#clickedUserPokemonType1" prefWidth="150.0" />
+                                          <ComboBox fx:id="UserPokemonType2" maxWidth="100.0" onAction="#clickedUserPokemonType2" prefWidth="150.0" />
+                                       </children>
+                                       <VBox.margin>
+                                          <Insets top="5.0" />
+                                       </VBox.margin>
+                                    </HBox>
+                                    <HBox alignment="CENTER_LEFT">
+                                       <children>
+                                          <Label minWidth="50.0" text="Form">
+                                             <HBox.margin>
+                                                <Insets left="10.0" />
+                                             </HBox.margin>
+                                          </Label>
+                                          <ComboBox fx:id="UserPokemonForm" disable="true" onAction="#clickedUserPokemonForm" prefWidth="150.0" />
+                                       </children>
+                                    </HBox>
+                                    <HBox alignment="CENTER_LEFT">
+                                       <children>
+                                          <Label minWidth="50.0" text="Gender">
+                                             <HBox.margin>
+                                                <Insets left="10.0" />
+                                             </HBox.margin>
+                                          </Label>
+                                          <ComboBox fx:id="UserPokemonGender" maxWidth="80.0" onAction="#clickedUserPokemonGender" prefWidth="150.0" />
+                                       </children>
+                                    </HBox>
+                                    <HBox alignment="CENTER_LEFT">
+                                       <children>
+                                          <Label minWidth="50.0" text="Level">
+                                             <HBox.margin>
+                                                <Insets left="10.0" />
+                                             </HBox.margin>
+                                          </Label>
+                                          <TextField fx:id="UserPokemonLevel" maxWidth="40.0" onKeyTyped="#changeUserPokemonLevel" />
+                                       </children>
+                                    </HBox>
+                                    <HBox>
+                                       <children>
+                                          <Label style="-fx-font-weight: bold;" text="Base">
+                                             <HBox.margin>
+                                                <Insets left="57.0" />
+                                             </HBox.margin>
+                                          </Label>
+                                          <Label style="-fx-font-weight: bold;" text="IVs">
+                                             <HBox.margin>
+                                                <Insets left="20.0" />
+                                             </HBox.margin>
+                                          </Label>
+                                          <Label style="-fx-font-weight: bold;" text="EVs">
+                                             <HBox.margin>
+                                                <Insets left="19.0" />
+                                             </HBox.margin>
+                                          </Label>
+                                       </children>
+                                       <VBox.margin>
+                                          <Insets top="10.0" />
+                                       </VBox.margin>
+                                    </HBox>
+                                    <HBox alignment="CENTER_LEFT">
+                                       <children>
+                                          <Label minWidth="45.0" text="HP">
+                                             <HBox.margin>
+                                                <Insets left="10.0" />
+                                             </HBox.margin>
+                                          </Label>
+                                          <TextField fx:id="UserPokemonBaseHP" maxWidth="40.0" onKeyTyped="#changedUserPokemonBaseHP" />
+                                          <TextField fx:id="UserPokemonIVHP" maxWidth="40.0" onKeyTyped="#changedUserPokemonIVHP" />
+                                          <TextField fx:id="UserPokemonEVHP" maxWidth="40.0" onKeyTyped="#changedUserPokemonEVHP" />
+                                          <Label fx:id="UserPokemonHP" minWidth="20.0" text="123">
+                                             <HBox.margin>
+                                                <Insets left="5.0" />
+                                             </HBox.margin>
+                                          </Label>
+                                       </children>
+                                    </HBox>
+                                    <HBox alignment="CENTER_LEFT">
+                                       <children>
+                                          <Label minWidth="45.0" text="Attack">
+                                             <HBox.margin>
+                                                <Insets left="10.0" />
+                                             </HBox.margin>
+                                          </Label>
+                                          <TextField fx:id="UserPokemonBaseAttack" maxWidth="40.0" onKeyTyped="#changedUserPokemonBaseAttack" />
+                                          <TextField fx:id="UserPokemonIVAttack" maxWidth="40.0" onKeyTyped="#changedUserPokemonIVAttack" />
+                                          <TextField fx:id="UserPokemonEVAttack" maxWidth="40.0" onKeyTyped="#changedUserPokemonEVAttack" />
+                                          <Label fx:id="UserPokemonAttack" minWidth="20.0" text="123">
+                                             <HBox.margin>
+                                                <Insets left="5.0" right="10.0" />
+                                             </HBox.margin>
+                                          </Label>
+                                          <ComboBox fx:id="UserPokemonAttackBoost" maxWidth="70.0" onAction="#changeUserPokemonAttackBoost" prefWidth="150.0" />
+                                       </children>
+                                    </HBox>
+                                    <HBox alignment="CENTER_LEFT">
+                                       <children>
+                                          <Label minWidth="45.0" text="Defense">
+                                             <HBox.margin>
+                                                <Insets left="10.0" />
+                                             </HBox.margin>
+                                          </Label>
+                                          <TextField fx:id="UserPokemonBaseDefense" maxWidth="40.0" onKeyTyped="#changedUserPokemonBaseDefense" />
+                                          <TextField fx:id="UserPokemonIVDefense" maxWidth="40.0" onKeyTyped="#changedUserPokemonIVDefense" />
+                                          <TextField fx:id="UserPokemonEVDefense" maxWidth="40.0" onKeyTyped="#changedUserPokemonEVDefense" />
+                                          <Label fx:id="UserPokemonDefense" minWidth="20.0" text="123">
+                                             <HBox.margin>
+                                                <Insets left="5.0" right="10.0" />
+                                             </HBox.margin>
+                                          </Label>
+                                          <ComboBox fx:id="UserPokemonDefenseBoost" maxWidth="70.0" onAction="#changedUserPokemonDefenseBoost" prefWidth="150.0" />
+                                       </children>
+                                    </HBox>
+                                    <HBox alignment="CENTER_LEFT">
+                                       <children>
+                                          <Label minWidth="45.0" text="Sp.Atk">
+                                             <HBox.margin>
+                                                <Insets left="10.0" />
+                                             </HBox.margin>
+                                          </Label>
+                                          <TextField fx:id="UserPokemonBaseSpecialAttack" maxWidth="40.0" onKeyTyped="#changedUserPokemonBaseSpecialAttack" />
+                                          <TextField fx:id="UserPokemonIVSpecialAttack" maxWidth="40.0" onKeyTyped="#changedUserPokemonIVSpecialAttack" />
+                                          <TextField fx:id="UserPokemonEVSpecialAttack" maxWidth="40.0" onKeyTyped="#changedUserPokemonEVSpecialAttack" />
+                                          <Label fx:id="UserPokemonSpecialAttack" minWidth="20.0" text="123">
+                                             <HBox.margin>
+                                                <Insets left="5.0" right="10.0" />
+                                             </HBox.margin>
+                                          </Label>
+                                          <ComboBox fx:id="UserPokemonSpecialAttackBoost" maxWidth="70.0" onAction="#changedUserPokemonEVSpecialAttackBoost" prefWidth="150.0" />
+                                       </children>
+                                    </HBox>
+                                    <HBox alignment="CENTER_LEFT">
+                                       <children>
+                                          <Label minWidth="45.0" text="Sp.Def">
+                                             <HBox.margin>
+                                                <Insets left="10.0" />
+                                             </HBox.margin>
+                                          </Label>
+                                          <TextField fx:id="UserPokemonBaseSpecialDefense" maxWidth="40.0" onKeyTyped="#changedUserPokemonBaseSpecialDefense" />
+                                          <TextField fx:id="UserPokemonIVSpecialDefense" maxWidth="40.0" onKeyTyped="#changedUserPokemonIVSpecialDefense" />
+                                          <TextField fx:id="UserPokemonEVSpecialDefense" maxWidth="40.0" onKeyTyped="#changedUserPokemonEVSpecialDefense" />
+                                          <Label fx:id="UserPokemonSpecialDefense" minWidth="20.0" text="123">
+                                             <HBox.margin>
+                                                <Insets left="5.0" right="10.0" />
+                                             </HBox.margin>
+                                          </Label>
+                                          <ComboBox fx:id="UserPokemonSpecialDefenseBoost" maxWidth="70.0" onAction="#changedUserPokemonSpecialDefenseBoost" prefWidth="150.0" />
+                                       </children>
+                                    </HBox>
+                                    <HBox alignment="CENTER_LEFT">
+                                       <children>
+                                          <Label minWidth="45.0" text="Speed">
+                                             <HBox.margin>
+                                                <Insets left="10.0" />
+                                             </HBox.margin>
+                                          </Label>
+                                          <TextField fx:id="UserPokemonBaseSpeed" maxWidth="40.0" onKeyTyped="#changedUserPokemonBaseSpeed" />
+                                          <TextField fx:id="UserPokemonIVSpeed" maxWidth="40.0" onKeyTyped="#changedUserPokemonIVSpeed" />
+                                          <TextField fx:id="UserPokemonEVSpeed" maxWidth="40.0" onKeyTyped="#changedUserPokemonEVSpeed" />
+                                          <Label fx:id="UserPokemonSpeed" minWidth="20.0" text="123">
+                                             <HBox.margin>
+                                                <Insets left="5.0" right="10.0" />
+                                             </HBox.margin>
+                                          </Label>
+                                          <ComboBox fx:id="UserPokemonSpeedBoost" maxWidth="70.0" onAction="#changedUserPokemonSpeedBoost" prefWidth="150.0" />
+                                       </children>
+                                    </HBox>
+                                    <HBox alignment="CENTER_LEFT">
+                                       <children>
+                                          <Label minWidth="45.0" text="Nature">
+                                             <HBox.margin>
+                                                <Insets left="10.0" />
+                                             </HBox.margin>
+                                          </Label>
+                                          <ComboBox fx:id="UserPokemonNature" onAction="#changeUserPokemonNature" prefWidth="150.0" />
+                                       </children>
+                                       <VBox.margin>
+                                          <Insets top="10.0" />
+                                       </VBox.margin>
+                                    </HBox>
+                                    <HBox alignment="CENTER_LEFT">
+                                       <children>
+                                          <Label minWidth="45.0" text="Ability">
+                                             <HBox.margin>
+                                                <Insets left="10.0" />
+                                             </HBox.margin>
+                                          </Label>
+                                          <ComboBox fx:id="UserPokemonAbility" onAction="#changeUserPokemonAbility" prefWidth="150.0" />
+                                       </children>
+                                    </HBox>
+                                    <HBox alignment="CENTER_LEFT">
+                                       <children>
+                                          <Label minWidth="45.0" text="Item">
+                                             <HBox.margin>
+                                                <Insets left="10.0" />
+                                             </HBox.margin>
+                                          </Label>
+                                          <ComboBox fx:id="UserPokemonItem" onAction="#changeUserPokemonItem" prefWidth="150.0" />
+                                       </children>
+                                    </HBox>
+                                    <HBox alignment="CENTER_LEFT">
+                                       <children>
+                                          <Label minWidth="45.0" text="Status">
+                                             <HBox.margin>
+                                                <Insets left="10.0" />
+                                             </HBox.margin>
+                                          </Label>
+                                          <ComboBox fx:id="UserPokemonStatus" onAction="#changeUserPokemonStatus" prefWidth="150.0" />
+                                       </children>
+                                    </HBox>
+                                    <HBox alignment="CENTER_LEFT">
+                                       <children>
+                                          <Label text="Current HP">
+                                             <HBox.margin>
+                                                <Insets left="10.0" right="10.0" />
+                                             </HBox.margin>
+                                          </Label>
+                                          <TextField fx:id="UserPokemonCurrentHPFlat" maxWidth="40.0" onKeyTyped="#changedUserPokemonCurrentHPFlat" />
+                                          <Label fx:id="UserPokemonMaxHp" text="/321 (">
+                                             <HBox.margin>
+                                                <Insets left="2.0" />
+                                             </HBox.margin>
+                                          </Label>
+                                          <TextField fx:id="UserPokemonCurrentHPPercentage" maxWidth="40.0" onKeyTyped="#changedUserPokemonCurrentHPPercentage">
+                                             <HBox.margin>
+                                                <Insets left="2.0" right="2.0" />
+                                             </HBox.margin>
+                                          </TextField>
+                                          <Label text="\%)" />
+                                          <Button fx:id="UserPokemonDynamax" disable="true" mnemonicParsing="false" onAction="#clickedUserPokemonDynamax" text="Dynamax">
+                                             <HBox.margin>
+                                                <Insets left="2.0" />
+                                             </HBox.margin>
+                                          </Button>
+                                       </children>
+                                       <VBox.margin>
+                                          <Insets top="10.0" />
+                                       </VBox.margin>
+                                    </HBox>
+                                    <HBox alignment="CENTER_LEFT">
+                                       <VBox.margin>
+                                          <Insets top="10.0" />
+                                       </VBox.margin>
+                                       <children>
+                                          <ComboBox fx:id="UserPokemonAttack1" minWidth="100.0" onAction="#changedUserPokemonAttack1" prefWidth="160.0">
+                                             <HBox.margin>
+                                                <Insets left="10.0" />
+                                             </HBox.margin>
+                                          </ComboBox>
+                                          <TextField fx:id="UserPokemonAttack1Damage" minWidth="40.0" onKeyTyped="#changedUserPokemonAttack1Damage" prefWidth="40.0" />
+                                          <ComboBox fx:id="UserPokemonAttack1Type" minWidth="80.0" onAction="#changedUserPokemonAttack1Type" prefWidth="120.0" />
+                                          <ComboBox fx:id="UserPokemonAttack1Category" minWidth="80.0" onAction="#changedUserPokemonAttack1Category" prefWidth="100.0" />
+                                       </children>
+                                       <padding>
+                                          <Insets right="10.0" />
+                                       </padding>
+                                    </HBox>
+                                    <HBox alignment="CENTER_LEFT">
+                                       <children>
+                                          <ComboBox fx:id="UserPokemonAttack2" minWidth="100.0" onAction="#changedUserPokemonAttack2" prefWidth="160.0">
+                                             <HBox.margin>
+                                                <Insets left="10.0" />
+                                             </HBox.margin>
+                                          </ComboBox>
+                                          <TextField fx:id="UserPokemonAttack2Damage" minWidth="40.0" onKeyTyped="#changedUserPokemonAttack2Damage" prefWidth="40.0" />
+                                          <ComboBox fx:id="UserPokemonAttack2Type" minWidth="80.0" onAction="#changedUserPokemonAttack2Type" prefWidth="120.0" />
+                                          <ComboBox fx:id="UserPokemonAttack2Category" minWidth="80.0" onAction="#changedUserPokemonAttack2Category" prefWidth="100.0" />
+                                       </children>
+                                       <padding>
+                                          <Insets right="10.0" />
+                                       </padding>
+                                    </HBox>
+                                    <HBox alignment="CENTER_LEFT">
+                                       <children>
+                                          <ComboBox fx:id="UserPokemonAttack3" minWidth="100.0" onAction="#changedUserPokemonAttack3" prefWidth="160.0">
+                                             <HBox.margin>
+                                                <Insets left="10.0" />
+                                             </HBox.margin>
+                                          </ComboBox>
+                                          <TextField fx:id="UserPokemonAttack3Damage" minWidth="40.0" onKeyTyped="#changedUserPokemonAttack3Damage" prefWidth="40.0" />
+                                          <ComboBox fx:id="UserPokemonAttack3Type" minWidth="80.0" onAction="#changedUserPokemonAttack3Type" prefWidth="120.0" />
+                                          <ComboBox fx:id="UserPokemonAttack3Category" minWidth="80.0" onAction="#changedUserPokemonAttack3Category" prefWidth="100.0" />
+                                       </children>
+                                       <padding>
+                                          <Insets right="10.0" />
+                                       </padding>
+                                    </HBox>
+                                    <HBox alignment="CENTER_LEFT">
+                                       <children>
+                                          <ComboBox fx:id="UserPokemonAttack4" minWidth="100.0" onAction="#changedUserPokemonAttack4" prefWidth="160.0">
+                                             <HBox.margin>
+                                                <Insets left="10.0" />
+                                             </HBox.margin>
+                                          </ComboBox>
+                                          <TextField fx:id="UserPokemonAttack4Damage" minWidth="40.0" onKeyTyped="#changedUserPokemonAttack4Damage" prefWidth="40.0" />
+                                          <ComboBox fx:id="UserPokemonAttack4Type" minWidth="80.0" onAction="#changedUserPokemonAttack4Type" prefWidth="120.0" />
+                                          <ComboBox fx:id="UserPokemonAttack4Category" minWidth="80.0" onAction="#changedUserPokemonAttack4Category" prefWidth="100.0" />
+                                       </children>
+                                       <padding>
+                                          <Insets right="10.0" />
+                                       </padding>
+                                    </HBox>
+                                 </children>
+                              </VBox>
+                           </children>
+                        </AnchorPane>
+                     </children>
+                  </VBox>
+                  <VBox minWidth="340.0" spacing="7.0" style="-fx-background-color: lightgray;">
+                     <children>
+                        <HBox alignment="CENTER" spacing="5.0">
+                           <children>
+                              <ImageView fx:id="Badge1" fitHeight="30.0" fitWidth="30.0" onMouseClicked="#clickedBadge1" opacity="0.3" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../Img/Badge/Stone_Badge.png" />
+                                 </image>
+                              </ImageView>
+                              <ImageView fx:id="Badge2" fitHeight="30.0" fitWidth="30.0" onMouseClicked="#clickedBadge2" opacity="0.3" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../Img/Badge/Knuckle_Badge.png" />
+                                 </image>
+                              </ImageView>
+                              <ImageView fx:id="Badge3" fitHeight="30.0" fitWidth="30.0" onMouseClicked="#clickedBadge3" opacity="0.3" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../Img/Badge/Dynamo_Badge.png" />
+                                 </image>
+                              </ImageView>
+                              <ImageView fx:id="Badge4" fitHeight="30.0" fitWidth="30.0" onMouseClicked="#clickedBadge4" opacity="0.3" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../Img/Badge/Heat_Badge.png" />
+                                 </image>
+                              </ImageView>
+                              <ImageView fx:id="Badge5" fitHeight="30.0" fitWidth="30.0" onMouseClicked="#clickedBadge5" opacity="0.3" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../Img/Badge/Balance_Badge.png" />
+                                 </image>
+                              </ImageView>
+                              <ImageView fx:id="Badge6" fitHeight="30.0" fitWidth="30.0" onMouseClicked="#clickedBadge6" opacity="0.3" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../Img/Badge/Feather_Badge.png" />
+                                 </image>
+                              </ImageView>
+                              <ImageView fx:id="Badge7" fitHeight="30.0" fitWidth="30.0" onMouseClicked="#clickedBadge7" opacity="0.3" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../Img/Badge/Mind_Badge.png" />
+                                 </image>
+                              </ImageView>
+                              <ImageView fx:id="Badge8" fitHeight="30.0" fitWidth="30.0" onMouseClicked="#clickedBadge8" opacity="0.3" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../Img/Badge/Rain_Badge.png" />
+                                 </image>
+                              </ImageView>
+                           </children>
+                           <VBox.margin>
+                              <Insets />
+                           </VBox.margin>
+                        </HBox>
+                        <HBox alignment="CENTER">
+                           <children>
+                              <Button fx:id="Singles" mnemonicParsing="false" onAction="#clickedSingles" styleClass="calcButtonInUsage" stylesheets="@../CSS/style.css" text="Singles" />
+                              <Button fx:id="Doubles" mnemonicParsing="false" onAction="#clickedDoubles" styleClass="calcButtonsNotUsed" stylesheets="@../CSS/style.css" text="Doubles" />
+                           </children>
+                           <VBox.margin>
+                              <Insets />
+                           </VBox.margin>
+                        </HBox>
+                        <FlowPane alignment="CENTER">
+                           <children>
+                              <Button fx:id="ElectricTerrain" mnemonicParsing="false" onAction="#clickedElectricTerrain" styleClass="calcButtonsNotUsed" stylesheets="@../CSS/style.css" text="Electric Terrain" />
+                              <Button fx:id="GrassyTerrain" mnemonicParsing="false" onAction="#clickedGrassyTerrain" styleClass="calcButtonsNotUsed" stylesheets="@../CSS/style.css" text="Grassy Terrain" />
+                              <Button fx:id="MistyTerrain" mnemonicParsing="false" onAction="#clickedMistyTerrain" styleClass="calcButtonsNotUsed" stylesheets="@../CSS/style.css" text="Misty terrain" />
+                              <Button fx:id="PsychicTerrain" mnemonicParsing="false" onAction="#clickedPsychicTerrain" styleClass="calcButtonsNotUsed" stylesheets="@../CSS/style.css" text="Psychic Terrain">
+                                 <FlowPane.margin>
+                                    <Insets />
+                                 </FlowPane.margin></Button>
+                           </children>
+                           <VBox.margin>
+                              <Insets />
+                           </VBox.margin>
+                        </FlowPane>
+                        <Separator style="-fx-background-color: black;">
+                           <VBox.margin>
+                              <Insets left="10.0" right="10.0" />
+                           </VBox.margin>
+                        </Separator>
+                        <FlowPane alignment="CENTER">
+                           <children>
+                              <Button fx:id="None" mnemonicParsing="false" onAction="#clickedNone" styleClass="calcButtonInUsage" stylesheets="@../CSS/style.css" text="None" />
+                              <Button fx:id="Sun" mnemonicParsing="false" onAction="#clickedSun" styleClass="calcButtonsNotUsed" stylesheets="@../CSS/style.css" text="Sun" />
+                              <Button fx:id="Rain" mnemonicParsing="false" onAction="#clickedRain" styleClass="calcButtonsNotUsed" stylesheets="@../CSS/style.css" text="Rain" />
+                              <Button fx:id="Sand" mnemonicParsing="false" onAction="#clickedSand" styleClass="calcButtonsNotUsed" stylesheets="@../CSS/style.css" text="Sand" />
+                              <Button fx:id="Hail" mnemonicParsing="false" onAction="#clickedHail" styleClass="calcButtonsNotUsed" stylesheets="@../CSS/style.css" text="Hail" />
+                           </children>
+                           <VBox.margin>
+                              <Insets />
+                           </VBox.margin>
+                        </FlowPane>
+                        <FlowPane alignment="CENTER">
+                           <children>
+                              <Button fx:id="HarshSunshine" mnemonicParsing="false" onAction="#clickedHarshSunshine" styleClass="calcButtonsNotUsed" stylesheets="@../CSS/style.css" text="Harsh Sunshine" />
+                              <Button fx:id="HeavyRain" mnemonicParsing="false" onAction="#clickedHeavyRain" styleClass="calcButtonsNotUsed" stylesheets="@../CSS/style.css" text="Heavy Rain" />
+                              <Button fx:id="StrongWinds" mnemonicParsing="false" onAction="#clickedStrongWinds" styleClass="calcButtonsNotUsed" stylesheets="@../CSS/style.css" text="Strong Winds" />
+                           </children>
+                           <VBox.margin>
+                              <Insets />
+                           </VBox.margin>
+                        </FlowPane>
+                        <HBox alignment="CENTER">
+                           <children>
+                              <Button fx:id="Gravity" mnemonicParsing="false" onAction="#clickedGravity" styleClass="calcButtonsNotUsed" stylesheets="@../CSS/style.css" text="Gravity" />
+                           </children>
+                           <VBox.margin>
+                              <Insets />
+                           </VBox.margin>
+                        </HBox>
+                        <Separator prefWidth="200.0" style="-fx-background-color: black;">
+                           <VBox.margin>
+                              <Insets left="10.0" right="10.0" />
+                           </VBox.margin>
+                        </Separator>
+                        <AnchorPane>
+                           <VBox.margin>
+                              <Insets left="10.0" right="10.0" />
+                           </VBox.margin>
+                           <children>
+                              <VBox prefHeight="405.0" prefWidth="135.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                 <children>
+                                    <Button fx:id="UserStealthRock" mnemonicParsing="false" onAction="#clickedUserStealthRock" styleClass="calcButtonsNotUsed" stylesheets="@../CSS/style.css" text="Stealth Rock" />
+                                    <Button fx:id="UserSteelsurge" mnemonicParsing="false" onAction="#clickedUserSteelsurge" styleClass="calcButtonsNotUsed" stylesheets="@../CSS/style.css" text="Steelsurge" />
+                                    <HBox>
+                                       <children>
+                                          <Button fx:id="UserVineLash" mnemonicParsing="false" onAction="#clickedUserVineLash" styleClass="calcButtonsNotUsed" stylesheets="@../CSS/style.css" text="Vine Lash" />
+                                          <Button fx:id="UserWildfire" mnemonicParsing="false" onAction="#clickedUserWildfire" styleClass="calcButtonsNotUsed" stylesheets="@../CSS/style.css" text="Wildfire" />
+                                       </children>
+                                    </HBox>
+                                    <HBox>
+                                       <children>
+                                          <Button fx:id="UserCannonade" mnemonicParsing="false" onAction="#clickedUserCannonade" styleClass="calcButtonsNotUsed" stylesheets="@../CSS/style.css" text="Cannonade" />
+                                          <Button fx:id="UserVolcalith" mnemonicParsing="false" onAction="#clickedUserVolcalith" styleClass="calcButtonsNotUsed" stylesheets="@../CSS/style.css" text="Volcalith" />
+                                       </children>
+                                    </HBox>
+                                    <HBox>
+                                       <children>
+                                          <Button fx:id="UserSpike0" mnemonicParsing="false" onAction="#clickedUserSpike0" styleClass="calcButtonInUsage" stylesheets="@../CSS/style.css" text="0" />
+                                          <Button fx:id="UserSpike1" mnemonicParsing="false" onAction="#clickedUserSpike1" styleClass="calcButtonsNotUsed" stylesheets="@../CSS/style.css" text="1" />
+                                          <Button fx:id="UserSpike2" mnemonicParsing="false" onAction="#clickedUserSpike2" styleClass="calcButtonsNotUsed" stylesheets="@../CSS/style.css" text="2" />
+                                          <Button fx:id="UserSpike3" mnemonicParsing="false" onAction="#clickedUserSpike3" styleClass="calcButtonsNotUsed" stylesheets="@../CSS/style.css" text="3 Spikes" />
+                                       </children>
+                                    </HBox>
+                                    <HBox>
+                                       <children>
+                                          <Button fx:id="UserReflect" mnemonicParsing="false" onAction="#clickedUserReflect" styleClass="calcButtonsNotUsed" stylesheets="@../CSS/style.css" text="Reflect" />
+                                          <Button fx:id="UserLightScreen" mnemonicParsing="false" onAction="#clickedUserLightScreen" styleClass="calcButtonsNotUsed" stylesheets="@../CSS/style.css" text="Light Screen" />
+                                       </children>
+                                    </HBox>
+                                    <Button fx:id="UserProtect" mnemonicParsing="false" onAction="#clickedUserProtect" styleClass="calcButtonsNotUsed" stylesheets="@../CSS/style.css" text="Protect" />
+                                    <Button fx:id="UserLeechSeed" mnemonicParsing="false" onAction="#clickedUserLeechSeed" styleClass="calcButtonsNotUsed" stylesheets="@../CSS/style.css" text="Leech Seed" />
+                                    <Button fx:id="UserForesight" mnemonicParsing="false" onAction="#clickedUserForesight" styleClass="calcButtonsNotUsed" stylesheets="@../CSS/style.css" text="Foresight" />
+                                    <Button fx:id="UserHelpingHand" mnemonicParsing="false" onAction="#clickedUserHelpingHand" styleClass="calcButtonsNotUsed" stylesheets="@../CSS/style.css" text="Helping Hand" />
+                                    <Button fx:id="UserTailwind" mnemonicParsing="false" onAction="#clickedUserTailwind" styleClass="calcButtonsNotUsed" stylesheets="@../CSS/style.css" text="Tailwind" />
+                                    <Button fx:id="UserFriendGuard" mnemonicParsing="false" onAction="#clickedUserFriendGuard" styleClass="calcButtonsNotUsed" stylesheets="@../CSS/style.css" text="Friend Guard" />
+                                    <Button fx:id="UserAuroraVeil" mnemonicParsing="false" onAction="#clickedUserAuroraVail" styleClass="calcButtonsNotUsed" stylesheets="@../CSS/style.css" text="Aurora Veil" />
+                                    <Button fx:id="UserBattery" mnemonicParsing="false" onAction="#clickedUserBattery" styleClass="calcButtonsNotUsed" stylesheets="@../CSS/style.css" text="Battery" />
+                                    <Button fx:id="UserSwitchingOut" mnemonicParsing="false" onAction="#clickedUserSwitchingOut" styleClass="calcButtonsNotUsed" stylesheets="@../CSS/style.css" text="Switching Out" />
+                                 </children>
+                              </VBox>
+                              <VBox alignment="TOP_RIGHT" layoutX="158.0" prefHeight="405.0" prefWidth="128.0" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                 <children>
+                                    <Button fx:id="FoeStealthRock" mnemonicParsing="false" onAction="#clickedFoeStealthRock" styleClass="calcButtonsNotUsed" stylesheets="@../CSS/style.css" text="Stealth Rock" />
+                                    <Button fx:id="FoeSteelsurge" mnemonicParsing="false" onAction="#clickedFoeSteelsurge" styleClass="calcButtonsNotUsed" stylesheets="@../CSS/style.css" text="Steelsurge" />
+                                    <HBox alignment="TOP_RIGHT">
+                                       <children>
+                                          <Button fx:id="FoeWildfire" mnemonicParsing="false" onAction="#clickedFoeWildfire" styleClass="calcButtonsNotUsed" stylesheets="@../CSS/style.css" text="Wildfire" />
+                                          <Button fx:id="FoeVineLash" mnemonicParsing="false" onAction="#clickedFoeVineLash" styleClass="calcButtonsNotUsed" stylesheets="@../CSS/style.css" text="Vine Lash" />
+                                       </children>
+                                    </HBox>
+                                    <HBox alignment="TOP_RIGHT">
+                                       <children>
+                                          <Button fx:id="FoeCannonade" mnemonicParsing="false" onAction="#clickedFoeCannonade" styleClass="calcButtonsNotUsed" stylesheets="@../CSS/style.css" text="Cannonade" />
+                                          <Button fx:id="FoeVolcalith" mnemonicParsing="false" onAction="#clickedFoeVolcalith" styleClass="calcButtonsNotUsed" stylesheets="@../CSS/style.css" text="Volcalith" />
+                                       </children>
+                                    </HBox>
+                                    <HBox alignment="TOP_RIGHT">
+                                       <children>
+                                          <Button fx:id="FoeSpike3" mnemonicParsing="false" onAction="#clickedFoeSpike3" styleClass="calcButtonsNotUsed" stylesheets="@../CSS/style.css" text="3 Spikes" />
+                                          <Button fx:id="FoeSpike2" mnemonicParsing="false" onAction="#clickedFoeSpike2" styleClass="calcButtonsNotUsed" stylesheets="@../CSS/style.css" text="2" />
+                                          <Button fx:id="FoeSpike1" mnemonicParsing="false" onAction="#clickedFoeSpike1" styleClass="calcButtonsNotUsed" stylesheets="@../CSS/style.css" text="1" />
+                                          <Button fx:id="FoeSpike0" mnemonicParsing="false" onAction="#clickedFoeSpike0" styleClass="calcButtonInUsage" stylesheets="@../CSS/style.css" text="0" />
+                                       </children>
+                                    </HBox>
+                                    <HBox alignment="TOP_RIGHT">
+                                       <children>
+                                          <Button fx:id="FoeLightScreen" mnemonicParsing="false" onAction="#clickedFoeLightScreen" styleClass="calcButtonsNotUsed" stylesheets="@../CSS/style.css" text="Light Screen" />
+                                          <Button fx:id="FoeReflect" mnemonicParsing="false" onAction="#clickedFoeReflect" styleClass="calcButtonsNotUsed" stylesheets="@../CSS/style.css" text="Reflect" />
+                                       </children>
+                                    </HBox>
+                                    <Button fx:id="FoeProtect" mnemonicParsing="false" onAction="#clickedFoeProtect" styleClass="calcButtonsNotUsed" stylesheets="@../CSS/style.css" text="Protect" />
+                                    <Button fx:id="FoeLeechSeed" mnemonicParsing="false" onAction="#clickedFoeLeechSeed" styleClass="calcButtonsNotUsed" stylesheets="@../CSS/style.css" text="Leech Seed" />
+                                    <Button fx:id="FoeForesight" mnemonicParsing="false" onAction="#clickedFoeForesight" styleClass="calcButtonsNotUsed" stylesheets="@../CSS/style.css" text="Foresight" />
+                                    <Button fx:id="FoeHelpingHand" mnemonicParsing="false" onAction="#clickedFoeHelpingHand" styleClass="calcButtonsNotUsed" stylesheets="@../CSS/style.css" text="Helping Hand" />
+                                    <Button fx:id="FoeTailwind" mnemonicParsing="false" onAction="#clickedFoeTailwind" styleClass="calcButtonsNotUsed" stylesheets="@../CSS/style.css" text="Tailwind" />
+                                    <Button fx:id="FoeFriendGuard" mnemonicParsing="false" onAction="#clickedFoeFriendGuard" styleClass="calcButtonsNotUsed" stylesheets="@../CSS/style.css" text="Friend Guard" />
+                                    <Button fx:id="FoeAuroraVeil" mnemonicParsing="false" onAction="#clickedFoeAuroraVeil" styleClass="calcButtonsNotUsed" stylesheets="@../CSS/style.css" text="Aurora Veil" />
+                                    <Button fx:id="FoeBattery" mnemonicParsing="false" onAction="#clickedFoeBattery" styleClass="calcButtonsNotUsed" stylesheets="@../CSS/style.css" text="Battery" />
+                                    <Button fx:id="FoeSwitchingOut" mnemonicParsing="false" onAction="#clickedFoeSwitchingOut" styleClass="calcButtonsNotUsed" stylesheets="@../CSS/style.css" text="Switching Out" />
+                                 </children>
+                              </VBox>
+                           </children>
+                        </AnchorPane>
+                     </children>
+                  </VBox>
+                  <VBox minWidth="320.0" style="-fx-background-color: rgba(255, 127, 80, 0.5);">
+                     <children>
+                        <HBox alignment="CENTER" spacing="20.0">
+                           <children>
+                              <Button minWidth="50.0" mnemonicParsing="false" onAction="#getTrainers" text="Trainers" />
+                              <Button minWidth="50.0" mnemonicParsing="false" onAction="#getFoePokemonStats" text="Stats" />
+                           </children>
+                           <VBox.margin>
+                              <Insets bottom="10.0" top="10.0" />
+                           </VBox.margin>
+                        </HBox>
+                        <Separator prefWidth="200.0" />
+                        <HBox alignment="CENTER" spacing="5.0">
+                           <children>
+                              <Button mnemonicParsing="false" onAction="#previousTrainer" text="&lt;-">
+                                 <cursor>
+                                    <Cursor fx:constant="HAND" />
+                                 </cursor>
+                              </Button>
+                              <ImageView fx:id="FoeTrainerSprite" fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../Img/Trainers/Brendan_Small_E.png" />
+                                 </image>
+                              </ImageView>
+                              <Label fx:id="foePokemon1" maxHeight="30.0" maxWidth="30.0" minHeight="30.0" minWidth="30.0" onMouseClicked="#clickedFoePokemon1" styleClass="pokeballBackground" stylesheets="@../CSS/style.css" />
+                              <Label fx:id="foePokemon2" maxHeight="30.0" maxWidth="30.0" minHeight="30.0" minWidth="30.0" onMouseClicked="#clickedFoePokemon2" styleClass="pokeballBackground" stylesheets="@../CSS/style.css" />
+                              <Label fx:id="foePokemon3" maxHeight="30.0" maxWidth="30.0" minHeight="30.0" minWidth="30.0" onMouseClicked="#clickedFoePokemon3" styleClass="pokeballBackground" stylesheets="@../CSS/style.css" />
+                              <Label fx:id="foePokemon4" maxHeight="30.0" maxWidth="30.0" minHeight="30.0" minWidth="30.0" onMouseClicked="#clickedFoePokemon4" styleClass="pokeballBackground" stylesheets="@../CSS/style.css" />
+                              <Label fx:id="foePokemon5" maxHeight="30.0" maxWidth="30.0" minHeight="30.0" minWidth="30.0" onMouseClicked="#clickedFoePokemon5" styleClass="pokeballBackground" stylesheets="@../CSS/style.css" />
+                              <Label fx:id="foePokemon6" maxHeight="30.0" maxWidth="30.0" minHeight="30.0" minWidth="30.0" onMouseClicked="#clickedFoePokemon6" styleClass="pokeballBackground" stylesheets="@../CSS/style.css" />
+                              <Button mnemonicParsing="false" onAction="#nextTrainer" text="-&gt;">
+                                 <cursor>
+                                    <Cursor fx:constant="HAND" />
+                                 </cursor>
+                              </Button>
+                           </children>
+                           <VBox.margin>
+                              <Insets bottom="5.0" top="5.0" />
+                           </VBox.margin>
+                        </HBox>
+                        <Separator prefWidth="200.0" />
+                        <AnchorPane prefHeight="200.0" prefWidth="200.0">
+                           <children>
+                              <VBox fx:id="TrainerVBox" prefHeight="200.0" prefWidth="100.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                 <children>
+                                    <HBox alignment="CENTER">
+                                       <children>
+                                          <Button disable="true" mnemonicParsing="false" onAction="#addTrainer" style="-fx-text-fill: rgb(255, 255, 255); -fx-background-color: rgb(142,255,0); -fx-background-radius: 20;" text="➕" />
+                                       </children>
+                                       <VBox.margin>
+                                          <Insets top="10.0" />
+                                       </VBox.margin>
+                                    </HBox>
+                                    <FlowPane fx:id="Trainers" hgap="10.0" vgap="10.0">
+                                       <opaqueInsets>
+                                          <Insets />
+                                       </opaqueInsets>
+                                       <VBox.margin>
+                                          <Insets left="10.0" right="10.0" />
+                                       </VBox.margin>
+                                    </FlowPane>
+                                 </children>
+                              </VBox>
+                              <VBox fx:id="TrainerVBoxStats" prefHeight="527.0" prefWidth="300.0" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                 <children>
+                                    <HBox alignment="CENTER_LEFT" prefWidth="300.0">
+                                       <children>
+                                          <Label minWidth="50.0" text="Type">
+                                             <HBox.margin>
+                                                <Insets left="10.0" />
+                                             </HBox.margin>
+                                          </Label>
+                                          <ComboBox fx:id="FoePokemonType1" maxWidth="100.0" onAction="#changeFoePokemonType1" prefWidth="150.0" />
+                                          <ComboBox fx:id="FoePokemonType2" maxWidth="100.0" onAction="#changeFoePokemonType2" prefWidth="150.0" />
+                                       </children>
+                                       <VBox.margin>
+                                          <Insets top="5.0" />
+                                       </VBox.margin>
+                                    </HBox>
+                                    <HBox alignment="CENTER_LEFT">
+                                       <children>
+                                          <Label minWidth="50.0" text="Form">
+                                             <HBox.margin>
+                                                <Insets left="10.0" />
+                                             </HBox.margin>
+                                          </Label>
+                                          <ComboBox fx:id="FoePokemonForm" disable="true" onAction="#changeFoePokemonForm" prefWidth="150.0" />
+                                       </children>
+                                    </HBox>
+                                    <HBox alignment="CENTER_LEFT">
+                                       <children>
+                                          <Label minWidth="50.0" text="Gender">
+                                             <HBox.margin>
+                                                <Insets left="10.0" />
+                                             </HBox.margin>
+                                          </Label>
+                                          <ComboBox fx:id="FoePokemonGender" maxWidth="80.0" onAction="#changeFoePokemonGender" prefWidth="150.0" />
+                                       </children>
+                                    </HBox>
+                                    <HBox alignment="CENTER_LEFT">
+                                       <children>
+                                          <Label minWidth="50.0" text="Level">
+                                             <HBox.margin>
+                                                <Insets left="10.0" />
+                                             </HBox.margin>
+                                          </Label>
+                                          <TextField fx:id="FoePokemonLevel" maxWidth="40.0" onKeyTyped="#changeFoePokemonLevel" />
+                                       </children>
+                                    </HBox>
+                                    <HBox>
+                                       <children>
+                                          <Label style="-fx-font-weight: bold;" text="Base">
+                                             <HBox.margin>
+                                                <Insets left="57.0" />
+                                             </HBox.margin>
+                                          </Label>
+                                          <Label style="-fx-font-weight: bold;" text="IVs">
+                                             <HBox.margin>
+                                                <Insets left="20.0" />
+                                             </HBox.margin>
+                                          </Label>
+                                          <Label style="-fx-font-weight: bold;" text="EVs">
+                                             <HBox.margin>
+                                                <Insets left="19.0" />
+                                             </HBox.margin>
+                                          </Label>
+                                       </children>
+                                       <VBox.margin>
+                                          <Insets top="10.0" />
+                                       </VBox.margin>
+                                    </HBox>
+                                    <HBox alignment="CENTER_LEFT">
+                                       <children>
+                                          <Label minWidth="45.0" text="HP">
+                                             <HBox.margin>
+                                                <Insets left="10.0" />
+                                             </HBox.margin>
+                                          </Label>
+                                          <TextField fx:id="FoePokemonBaseHP" maxWidth="40.0" onKeyTyped="#changeFoePokemonBaseHP" />
+                                          <TextField fx:id="FoePokemonIVHP" maxWidth="40.0" onKeyTyped="#changeFoePokemonIVHP" />
+                                          <TextField fx:id="FoePokemonEVHP" maxWidth="40.0" onKeyTyped="#changeFoePokemonEVHP" />
+                                          <Label fx:id="FoePokemonHP" minWidth="20.0" text="123">
+                                             <HBox.margin>
+                                                <Insets left="5.0" />
+                                             </HBox.margin>
+                                          </Label>
+                                       </children>
+                                    </HBox>
+                                    <HBox alignment="CENTER_LEFT">
+                                       <children>
+                                          <Label minWidth="45.0" text="Attack">
+                                             <HBox.margin>
+                                                <Insets left="10.0" />
+                                             </HBox.margin>
+                                          </Label>
+                                          <TextField fx:id="FoePokemonBaseAttack" maxWidth="40.0" onKeyTyped="#changeFoePokemonBaseAttack" />
+                                          <TextField fx:id="FoePokemonIVAttack" maxWidth="40.0" onKeyTyped="#changeFoePokemonIVAttack" />
+                                          <TextField fx:id="FoePokemonEVAttack" maxWidth="40.0" onKeyTyped="#changeFoePokemonEVAttack" />
+                                          <Label fx:id="FoePokemonAttack" minWidth="20.0" text="123">
+                                             <HBox.margin>
+                                                <Insets left="5.0" right="10.0" />
+                                             </HBox.margin>
+                                          </Label>
+                                          <ComboBox fx:id="FoePokemonAttackBoost" maxWidth="70.0" onAction="#changeFoePokemonAttackBoost" prefWidth="150.0" />
+                                       </children>
+                                    </HBox>
+                                    <HBox alignment="CENTER_LEFT">
+                                       <children>
+                                          <Label minWidth="45.0" text="Defense">
+                                             <HBox.margin>
+                                                <Insets left="10.0" />
+                                             </HBox.margin>
+                                          </Label>
+                                          <TextField fx:id="FoePokemonBaseDefense" maxWidth="40.0" onKeyTyped="#changeFoePokemonBaseDefense" />
+                                          <TextField fx:id="FoePokemonIVDefense" maxWidth="40.0" onKeyTyped="#changeFoePokemonIVDefense" />
+                                          <TextField fx:id="FoePokemonEVDefense" maxWidth="40.0" onKeyTyped="#changeFoePokemonEVDefense" />
+                                          <Label fx:id="FoePokemonDefense" minWidth="20.0" text="123">
+                                             <HBox.margin>
+                                                <Insets left="5.0" right="10.0" />
+                                             </HBox.margin>
+                                          </Label>
+                                          <ComboBox fx:id="FoePokemonDefenseBoost" maxWidth="70.0" onAction="#changeFoePokemonDefenseBoost" prefWidth="150.0" />
+                                       </children>
+                                    </HBox>
+                                    <HBox alignment="CENTER_LEFT">
+                                       <children>
+                                          <Label minWidth="45.0" text="Sp.Atk">
+                                             <HBox.margin>
+                                                <Insets left="10.0" />
+                                             </HBox.margin>
+                                          </Label>
+                                          <TextField fx:id="FoePokemonBaseSpecialAttack" maxWidth="40.0" onKeyTyped="#changeFoePokemonBaseSpecialAttack" />
+                                          <TextField fx:id="FoePokemonIVSpecialAttack" maxWidth="40.0" onKeyTyped="#changeFoePokemonIVSpecialAttack" />
+                                          <TextField fx:id="FoePokemonEVSpecialAttack" maxWidth="40.0" onKeyTyped="#changeFoePokemonEVSpecialAttack" />
+                                          <Label fx:id="FoePokemonSpecialAttack" minWidth="20.0" text="123">
+                                             <HBox.margin>
+                                                <Insets left="5.0" right="10.0" />
+                                             </HBox.margin>
+                                          </Label>
+                                          <ComboBox fx:id="FoePokemonSpecialAttackBoost" maxWidth="70.0" onAction="#changeFoePokemonSpecialAttackBoost" prefWidth="150.0" />
+                                       </children>
+                                    </HBox>
+                                    <HBox alignment="CENTER_LEFT">
+                                       <children>
+                                          <Label minWidth="45.0" text="Sp.Def">
+                                             <HBox.margin>
+                                                <Insets left="10.0" />
+                                             </HBox.margin>
+                                          </Label>
+                                          <TextField fx:id="FoePokemonBaseSpecialDefense" maxWidth="40.0" onKeyTyped="#changeFoePokemonBaseSpecialDefense" />
+                                          <TextField fx:id="FoePokemonIVSpecialDefense" maxWidth="40.0" onKeyTyped="#changeFoePokemonIVSpecialDefense" />
+                                          <TextField fx:id="FoePokemonEVSpecialDefense" maxWidth="40.0" onKeyTyped="#changeFoePokemonEVSpecialDefense" />
+                                          <Label fx:id="FoePokemonSpecialDefense" minWidth="20.0" text="123">
+                                             <HBox.margin>
+                                                <Insets left="5.0" right="10.0" />
+                                             </HBox.margin>
+                                          </Label>
+                                          <ComboBox fx:id="FoePokemonSpecialDefenseBoost" maxWidth="70.0" onAction="#changeFoePokemonSpecialDefenseBoost" prefWidth="150.0" />
+                                       </children>
+                                    </HBox>
+                                    <HBox alignment="CENTER_LEFT">
+                                       <children>
+                                          <Label minWidth="45.0" text="Speed">
+                                             <HBox.margin>
+                                                <Insets left="10.0" />
+                                             </HBox.margin>
+                                          </Label>
+                                          <TextField fx:id="FoePokemonBaseSpeed" maxWidth="40.0" onKeyTyped="#changeFoePokemonBaseSpeed" />
+                                          <TextField fx:id="FoePokemonIVSpeed" maxWidth="40.0" onKeyTyped="#changeFoePokemonIVSpeed" />
+                                          <TextField fx:id="FoePokemonEVSpeed" maxWidth="40.0" onKeyTyped="#changeFoePokemonEVSpeed" />
+                                          <Label fx:id="FoePokemonSpeed" minWidth="20.0" text="123">
+                                             <HBox.margin>
+                                                <Insets left="5.0" right="10.0" />
+                                             </HBox.margin>
+                                          </Label>
+                                          <ComboBox fx:id="FoePokemonSpeedBoost" maxWidth="70.0" onAction="#changeFoePokemonSpeedBoost" prefWidth="150.0" />
+                                       </children>
+                                    </HBox>
+                                    <HBox alignment="CENTER_LEFT">
+                                       <children>
+                                          <Label minWidth="45.0" text="Nature">
+                                             <HBox.margin>
+                                                <Insets left="10.0" />
+                                             </HBox.margin>
+                                          </Label>
+                                          <ComboBox fx:id="FoePokemonNature" onAction="#changeFoePokemonNature" prefWidth="150.0" />
+                                       </children>
+                                       <VBox.margin>
+                                          <Insets top="10.0" />
+                                       </VBox.margin>
+                                    </HBox>
+                                    <HBox alignment="CENTER_LEFT">
+                                       <children>
+                                          <Label minWidth="45.0" text="Ability">
+                                             <HBox.margin>
+                                                <Insets left="10.0" />
+                                             </HBox.margin>
+                                          </Label>
+                                          <ComboBox fx:id="FoePokemonAbility" onAction="#changeFoePokemonAbility" prefWidth="150.0" />
+                                       </children>
+                                    </HBox>
+                                    <HBox alignment="CENTER_LEFT">
+                                       <children>
+                                          <Label minWidth="45.0" text="Item">
+                                             <HBox.margin>
+                                                <Insets left="10.0" />
+                                             </HBox.margin>
+                                          </Label>
+                                          <ComboBox fx:id="FoePokemonItem" onAction="#changeFoePokemonItem" prefWidth="150.0" />
+                                       </children>
+                                    </HBox>
+                                    <HBox alignment="CENTER_LEFT">
+                                       <children>
+                                          <Label minWidth="45.0" text="Status">
+                                             <HBox.margin>
+                                                <Insets left="10.0" />
+                                             </HBox.margin>
+                                          </Label>
+                                          <ComboBox fx:id="FoePokemonStatus" onAction="#changeFoePokemonStatus" prefWidth="150.0" />
+                                       </children>
+                                    </HBox>
+                                    <HBox alignment="CENTER_LEFT">
+                                       <children>
+                                          <Label text="Current HP">
+                                             <HBox.margin>
+                                                <Insets left="10.0" right="10.0" />
+                                             </HBox.margin>
+                                          </Label>
+                                          <TextField fx:id="FoePokemonCurrentHPFlat" maxWidth="40.0" onKeyTyped="#changeFoePokemonCurrentHPFlat" />
+                                          <Label fx:id="FoePokemonMaxHp" text="/321 (">
+                                             <HBox.margin>
+                                                <Insets left="2.0" />
+                                             </HBox.margin>
+                                          </Label>
+                                          <TextField fx:id="FoePokemonCurrentHPPercentage" maxWidth="40.0" onKeyTyped="#changeFoePokemonCurrentHPPercentage">
+                                             <HBox.margin>
+                                                <Insets left="2.0" right="2.0" />
+                                             </HBox.margin>
+                                          </TextField>
+                                          <Label text="\%)" />
+                                          <Button fx:id="FoePokemonDynamax" disable="true" mnemonicParsing="false" onAction="#clickFoePokemonDynamax" text="Dynamax">
+                                             <HBox.margin>
+                                                <Insets left="2.0" />
+                                             </HBox.margin>
+                                          </Button>
+                                       </children>
+                                       <VBox.margin>
+                                          <Insets top="10.0" />
+                                       </VBox.margin>
+                                    </HBox>
+                                    <HBox alignment="CENTER_LEFT">
+                                       <VBox.margin>
+                                          <Insets right="10.0" top="10.0" />
+                                       </VBox.margin>
+                                       <children>
+                                          <ComboBox fx:id="FoePokemonAttack1" minWidth="100.0" onAction="#changeFoePokemonAttack1" prefWidth="160.0">
+                                             <HBox.margin>
+                                                <Insets left="10.0" />
+                                             </HBox.margin>
+                                          </ComboBox>
+                                          <TextField fx:id="FoePokemonAttack1Damage" minWidth="40.0" onKeyTyped="#changeFoePokemonAttack1Damage" prefWidth="40.0" />
+                                          <ComboBox fx:id="FoePokemonAttack1Type" minWidth="80.0" onAction="#changeFoePokemonAttack1Type" prefWidth="120.0" />
+                                          <ComboBox fx:id="FoePokemonAttack1Category" minWidth="80.0" onAction="#changeFoePokemonAttack1Category" prefWidth="100.0" />
+                                       </children>
+                                    </HBox>
+                                    <HBox alignment="CENTER_LEFT">
+                                       <children>
+                                          <ComboBox fx:id="FoePokemonAttack2" maxWidth="1.7976931348623157E308" minWidth="100.0" onAction="#changeFoePokemonAttack2" prefWidth="160.0">
+                                             <HBox.margin>
+                                                <Insets left="10.0" />
+                                             </HBox.margin>
+                                          </ComboBox>
+                                          <TextField fx:id="FoePokemonAttack2Damage" minWidth="40.0" onKeyTyped="#changeFoePokemonAttack2Damage" prefWidth="40.0" />
+                                          <ComboBox fx:id="FoePokemonAttack2Type" minWidth="80.0" onAction="#changeFoePokemonAttack2Type" prefWidth="120.0" />
+                                          <ComboBox fx:id="FoePokemonAttack2Category" minWidth="80.0" onAction="#changeFoePokemonAttack2Category" prefWidth="100.0" />
+                                       </children>
+                                       <VBox.margin>
+                                          <Insets right="10.0" />
+                                       </VBox.margin>
+                                    </HBox>
+                                    <HBox alignment="CENTER_LEFT">
+                                       <children>
+                                          <ComboBox fx:id="FoePokemonAttack3" minWidth="100.0" onAction="#changeFoePokemonAttack3" prefWidth="160.0">
+                                             <HBox.margin>
+                                                <Insets left="10.0" />
+                                             </HBox.margin>
+                                          </ComboBox>
+                                          <TextField fx:id="FoePokemonAttack3Damage" minWidth="40.0" onKeyTyped="#changeFoePokemonAttack3Damage" prefWidth="40.0" />
+                                          <ComboBox fx:id="FoePokemonAttack3Type" minWidth="80.0" onAction="#changeFoePokemonAttack3Type" prefWidth="120.0" />
+                                          <ComboBox fx:id="FoePokemonAttack3Category" minWidth="80.0" onAction="#changeFoePokemonAttack3Category" prefWidth="100.0" />
+                                       </children>
+                                       <VBox.margin>
+                                          <Insets right="10.0" />
+                                       </VBox.margin>
+                                    </HBox>
+                                    <HBox alignment="CENTER_LEFT">
+                                       <children>
+                                          <ComboBox fx:id="FoePokemonAttack4" minWidth="100.0" onAction="#changeFoePokemonAttack4" prefWidth="160.0">
+                                             <HBox.margin>
+                                                <Insets left="10.0" />
+                                             </HBox.margin>
+                                          </ComboBox>
+                                          <TextField fx:id="FoePokemonAttack4Damage" minWidth="40.0" onKeyTyped="#changeFoePokemonAttack4Damage" prefWidth="40.0" />
+                                          <ComboBox fx:id="FoePokemonAttack4Type" minWidth="80.0" onAction="#changeFoePokemonAttack4Type" prefWidth="120.0" />
+                                          <ComboBox fx:id="FoePokemonAttack4Category" minWidth="80.0" onAction="#changeFoePokemonAttack4Category" prefWidth="100.0" />
+                                       </children>
+                                       <VBox.margin>
+                                          <Insets right="10.0" />
+                                       </VBox.margin>
+                                    </HBox>
+                                 </children>
+                              </VBox>
+                           </children>
+                        </AnchorPane>
+                     </children>
+                  </VBox>
+              </items>
+            </SplitPane>
+         </center>
+      </BorderPane>
+   </content>
+</ScrollPane>
