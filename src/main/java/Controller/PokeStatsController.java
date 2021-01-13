@@ -1,5 +1,6 @@
 package Controller;
 
+import Classes.Abstract.AbstractPokeStatsController;
 import Classes.PokeStats;
 import Classes.Sprite;
 import Utilities.Utilities;
@@ -15,70 +16,37 @@ import javafx.scene.layout.VBox;
 
 import java.util.ArrayList;
 
-public class PokeStatsController {
+public class PokeStatsController extends AbstractPokeStatsController {
     // static method to create instance of Singleton class
     private static PokeStatsController controller = null;
     public static PokeStatsController getInstance() {
         return controller;
     }
-    @FXML
     public void initialize() {
         controller = this;
     }
 
-    // FXML
     public VBox PokemonContainer;
-    public TextField Species;
-    public TextField DexNr;
-    public TextField Height;
-    public TextField Weight;
-    public ComboBox<String> ExpGrowthRate;
-    public ComboBox<String> PokemonType1;
-    public ComboBox<String> PokemonType2;
-    public TextField BaseHp;
-    public TextField BaseAttack;
-    public TextField BaseDefense;
-    public TextField BaseSpecialAttack;
-    public TextField BaseSpecialDefense;
-    public TextField BaseSpeed;
-    public VBox ImageContainer;
-    public Label BackgroundSprite;
     public Button CreatePokeStatsButton;
     public Button EditPokeStatsButton;
     public Button DeletePokeStatsButton;
     // Variables
     public HBox previousPokeStatsBox;
-    public HBox previousSpriteBox;
     public HBox activePokeStatsBox;
     public int pokemonStatsId;
-    public Label nameOfPokemon;
     public Label smallSpriteOfPokemon;
     public Label dexNrOfPokemon;
-    public int spriteId;
-    public ObservableList<PokeStats> pokeStatsList;
-    public ObservableList<Sprite> pokeSpriteList;
 
 
     public void backToMenu() {
         Utilities.backToMenu();
     }
 
-    // --------------- Species Already Exists ---------------
-    public boolean doesSpeciesAlreadyExist() {
-        String species = Species.getText();
-        if (species.length() > 0) {
-            species = species.substring(0, 1).toUpperCase() + species.substring(1);
-            boolean result;
+    // --------------- Search ---------------
+    public void searchForPokeStats() {
+    }
 
-            if (nameOfPokemon.getText().equals(species)) result = false;
-            else result = Utilities.findPokeStatsInList(species, pokeStatsList);
-
-            if (result) Species.setStyle("-fx-background-color: rgba(255, 168, 181, 1);");
-            else Species.setStyle("-fx-background-color: rgba(255, 255, 255, 1);");
-
-            return result;
-        }
-        return true;
+    public void searchForSprite() {
     }
 
     // --------------- Options ---------------
@@ -243,12 +211,5 @@ public class PokeStatsController {
             index++;
         }
         pokeStatsList.remove(index);
-    }
-
-    // --------------- Search ---------------
-    public void searchForPokeStats() {
-    }
-
-    public void searchForSprite() {
     }
 }

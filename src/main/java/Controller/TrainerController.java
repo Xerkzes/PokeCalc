@@ -1,9 +1,9 @@
 package Controller;
 
 import Classes.*;
+import Classes.Abstract.AbstractPokemonController;
 import Utilities.Utilities;
 import View.TrainerView;
-import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
@@ -16,13 +16,11 @@ import javafx.scene.layout.VBox;
 
 import java.util.ArrayList;
 
-public class TrainerController {
-    // static method to create instance of Singleton class
+public class TrainerController extends AbstractPokemonController {
     private static TrainerController controller = null;
     public static TrainerController getInstance() {
         return controller;
     }
-    @FXML
     public void initialize() {
         controller = this;
     }
@@ -62,61 +60,6 @@ public class TrainerController {
     public ImageView Pokemon4Image;
     public ImageView Pokemon5Image;
     public ImageView Pokemon6Image;
-    // Main
-    public ComboBox<PokeStatsList> SpeciesName;
-    public TextField Nickname;
-    public ComboBox<String> Gender;
-    public TextField Level;
-    public ComboBox<Nature> Nature;
-    public ImageView HeldItemImage;
-    public ComboBox<Item> HeldItem;
-    public ComboBox<Ability> Ability;
-    public TextField Friendship;
-    // Met
-    public ImageView PokeballImage;
-    public ComboBox<Route> MetLocation;
-    public ComboBox<Sprite> PokeBall;
-    // Stats
-    public TextField IvHp;
-    public TextField IvAttack;
-    public TextField IvDefense;
-    public TextField IvSpecialAttack;
-    public TextField IvSpecialDefense;
-    public TextField IvSpeed;
-    public TextField EvHp;
-    public TextField EvAttack;
-    public TextField EvDefense;
-    public TextField EvSpecialAttack;
-    public TextField EvSpecialDefense;
-    public TextField EvSpeed;
-    public Label BaseHp;
-    public Label BaseAttack;
-    public Label BaseDefense;
-    public Label BaseSpecialAttack;
-    public Label BaseSpecialDefense;
-    public Label BaseSpeed;
-    public Label BaseTotal;
-    public Label IvTotal;
-    public Label EvTotal;
-    public Label StatsHp;
-    public Label StatsAttack;
-    public Label StatsDefense;
-    public Label StatsSpecialAttack;
-    public Label StatsSpecialDefense;
-    public Label StatsSpeed;
-    // Attack
-    public ComboBox<Attack> Attack1Move;
-    public ComboBox<Attack> Attack2Move;
-    public ComboBox<Attack> Attack3Move;
-    public ComboBox<Attack> Attack4Move;
-    public Label Attack1PP;
-    public Label Attack2PP;
-    public Label Attack3PP;
-    public Label Attack4PP;
-    public ComboBox<String> Attack1PPUps;
-    public ComboBox<String> Attack2PPUps;
-    public ComboBox<String> Attack3PPUps;
-    public ComboBox<String> Attack4PPUps;
     // Options
     public Button AddPokemonButton;
     public Button EditPokemonButton;
@@ -238,8 +181,8 @@ public class TrainerController {
         View.TrainerView tv = new View.TrainerView();
         if (pokemon != null) {
             int index = Utilities.findPokemonInPokemonList(pokemon, View.TrainerView.pokemonList);
-            tv.setPokemonStats(View.TrainerView.pokemonList.get(index));
-        } else tv.setPokemonStats(View.TrainerView.pokemonList.get(0));
+            tv.setPokemonStats(View.TrainerView.pokemonList.get(index), controller);
+        } else tv.setPokemonStats(View.TrainerView.pokemonList.get(0), controller);
     }
 
     public void selectPokemonOnTheMenu(Pokemon pokemon) {
@@ -261,306 +204,6 @@ public class TrainerController {
             }
         }
     }
-
-    // -------------------------- Main --------------------------
-    public void changedSpecies() {
-        View.TrainerView pv = new View.TrainerView();
-        int pokemonStatsId = SpeciesName.getValue().pokemonStatsId;
-        PokeStats tempPokeStats;
-
-        if (pokemonStatsId > 0) {
-            API.Database dbAPI = new API.Database();
-            tempPokeStats =  dbAPI.getPokeStatsFromPokemonStatsId(SpeciesName.getValue().pokemonStatsId);
-        } else tempPokeStats = new PokeStats(0, "No Pokemon", 0, "Slow", 0, 0, 0, 0, 0, 0, 0, 0);
-
-        pv.setBaseStats(tempPokeStats);
-        calculateBaseTotal();
-        calculateAndSetStats();
-    }
-
-    public void changedPokemonLevel() {
-        calculateAndSetStats();
-    }
-
-    public void changedNature() {
-        calculateAndSetStats();
-    }
-
-    public void changeHeldItemImage() {
-        API.Database dbAPI = new API.Database();
-        int spriteId = HeldItem.getValue().spriteId;
-
-        if (spriteId > 0) {
-            String imagePath = dbAPI.getImagePathFromSpriteID(spriteId);
-            HeldItemImage.setImage(new Image(imagePath));
-        }
-        else HeldItemImage.setImage(null);
-    }
-
-    // -------------------------- Met --------------------------
-    public void setPokeballImage() {
-        API.Database dbAPI = new API.Database();
-        String imagePath = dbAPI.getImagePathFromSpriteID(PokeBall.getValue().spriteId);
-        PokeballImage.setImage(new Image(imagePath));
-    }
-
-    // -------------------------- Stats --------------------------
-    // ---- IV ----
-    public void changeIvHp() {
-        calculateIvTotal();
-        int hp = calculateHpStat();
-        StatsHp.setText(Integer.toString(hp));
-    }
-
-    public void changeIvAttack() {
-        calculateIvTotal();
-        int attack = calculateAttackStat(Nature.getValue());
-        StatsAttack.setText(Integer.toString(attack));
-    }
-
-    public void changeIvDefense() {
-        calculateIvTotal();
-        int defense = calculateDefenseStat(Nature.getValue());
-        StatsDefense.setText(Integer.toString(defense));
-    }
-
-    public void changeIvSpecialAttack() {
-        calculateIvTotal();
-        int specialAttack = calculateSpecialAttackStat(Nature.getValue());
-        StatsSpecialAttack.setText(Integer.toString(specialAttack));
-    }
-
-    public void changeIvSpecialDefense() {
-        calculateIvTotal();
-        int specialDefense = calculateSpecialDefenseStat(Nature.getValue());
-        StatsSpecialDefense.setText(Integer.toString(specialDefense));
-    }
-
-    public void changeIvSpeed() {
-        calculateIvTotal();
-        int speed = calculateSpeedStat(Nature.getValue());
-        StatsSpeed.setText(Integer.toString(speed));
-    }
-
-    // ---- EV ----
-    public void changeEvHp() {
-        calculateEvTotal();
-        int hp = calculateHpStat();
-        StatsHp.setText(Integer.toString(hp));
-    }
-
-    public void changeEvAttack() {
-        calculateEvTotal();
-        int attack = calculateAttackStat(Nature.getValue());
-        StatsAttack.setText(Integer.toString(attack));
-    }
-
-    public void changeEvDefense() {
-        calculateEvTotal();
-        int defense = calculateDefenseStat(Nature.getValue());
-        StatsDefense.setText(Integer.toString(defense));
-    }
-
-    public void changeEvSpecialAttack() {
-        calculateEvTotal();
-        int specialAttack = calculateSpecialAttackStat(Nature.getValue());
-        StatsSpecialAttack.setText(Integer.toString(specialAttack));
-    }
-
-    public void changeEvSpecialDefense() {
-        calculateEvTotal();
-        int specialDefense = calculateSpecialDefenseStat(Nature.getValue());
-        StatsSpecialDefense.setText(Integer.toString(specialDefense));
-    }
-
-    public void changeEvSpeed() {
-        calculateEvTotal();
-        int speed = calculateSpeedStat(Nature.getValue());
-        StatsSpeed.setText(Integer.toString(speed));
-    }
-
-    // -------------------------- Attack --------------------------
-
-    public void setPPForMove1() {
-        Attack attack = Attack1Move.getValue();
-        Attack1PP.setText(Integer.toString(attack.pp));
-    }
-
-    public void setPPForMove2() {
-        Attack attack = Attack2Move.getValue();
-        Attack2PP.setText(Integer.toString(attack.pp));
-    }
-
-    public void setPPForMove3() {
-        Attack attack = Attack3Move.getValue();
-        Attack3PP.setText(Integer.toString(attack.pp));
-    }
-
-    public void setPPForMove4() {
-        Attack attack = Attack3Move.getValue();
-        Attack4PP.setText(Integer.toString(attack.pp));
-    }
-
-    // -------------------------- Calculation --------------------------
-    public void calculateBaseIvEv() {
-        calculateBaseTotal();
-        calculateIvTotal();
-        calculateEvTotal();
-    } // Base | Iv | Ev
-
-    public void calculateAndSetStats() {
-        int hp = calculateHpStat();
-        int attack = calculateAttackStat(Nature.getValue());
-        int defense = calculateDefenseStat(Nature.getValue());
-        int specialAttack = calculateSpecialAttackStat(Nature.getValue());
-        int specialDefense = calculateSpecialDefenseStat(Nature.getValue());
-        int speed = calculateSpeedStat(Nature.getValue());
-
-        StatsHp.setText(Integer.toString(hp));
-        StatsAttack.setText(Integer.toString(attack));
-        StatsDefense.setText(Integer.toString(defense));
-        StatsSpecialAttack.setText(Integer.toString(specialAttack));
-        StatsSpecialDefense.setText(Integer.toString(specialDefense));
-        StatsSpeed.setText(Integer.toString(speed));
-    }
-
-    public void calculateBaseTotal() {
-        int baseHP = Integer.parseInt(controller.BaseHp.getText());
-        int baseAttack = Integer.parseInt(controller.BaseAttack.getText());
-        int baseDefense = Integer.parseInt(controller.BaseDefense.getText());
-        int baseSpAttack = Integer.parseInt(controller.BaseSpecialAttack.getText());
-        int baseSpDefense = Integer.parseInt(controller.BaseSpecialDefense.getText());
-        int baseSpeed = Integer.parseInt(controller.BaseSpeed.getText());
-        int baseTotal = baseHP + baseAttack + baseDefense + baseSpAttack + baseSpDefense + baseSpeed;
-        controller.BaseTotal.setText(Integer.toString(baseTotal));
-    }
-
-    public void calculateIvTotal() {
-        try {
-            int ivHP = Integer.parseInt(controller.IvHp.getText());
-            int ivAttack = Integer.parseInt(controller.IvAttack.getText());
-            int ivDefense = Integer.parseInt(controller.IvDefense.getText());
-            int ivSpAttack = Integer.parseInt(controller.IvSpecialAttack.getText());
-            int ivSpDefense = Integer.parseInt(controller.IvSpecialDefense.getText());
-            int ivSpeed = Integer.parseInt(controller.IvSpeed.getText());
-            int ivTotal = ivHP + ivAttack + ivDefense + ivSpAttack + ivSpDefense + ivSpeed;
-            controller.IvTotal.setText(Integer.toString((ivTotal)));
-        } catch (Exception e) {
-            System.out.println(e);
-            controller.IvTotal.setText("0");
-        }
-    }
-
-    public void calculateEvTotal() {
-        try {
-            int evHP = Integer.parseInt(controller.EvHp.getText());
-            int evAttack = Integer.parseInt(controller.EvAttack.getText());
-            int evDefense = Integer.parseInt(controller.EvDefense.getText());
-            int evSpAttack = Integer.parseInt(controller.EvSpecialAttack.getText());
-            int evSpDefense = Integer.parseInt(controller.EvSpecialDefense.getText());
-            int evSpeed = Integer.parseInt(controller.EvSpeed.getText());
-            int evTotal = evHP + evAttack + evDefense + evSpAttack + evSpDefense + evSpeed;
-            controller.EvTotal.setText(Integer.toString((evTotal)));
-        } catch (Exception e) {
-            System.out.println(e);
-            controller.EvTotal.setText("0");
-        }
-    }
-
-    public int calculateHpStat() {
-        try {
-            int baseHp = Integer.parseInt(BaseHp.getText());
-            int ivHp = Integer.parseInt(IvHp.getText());
-            int evHp = Integer.parseInt(EvHp.getText());
-            int level = Integer.parseInt(Level.getText());
-
-            return (((2 * baseHp + ivHp + (evHp / 4)) * level) / 100) + level + 10;
-        } catch (Exception e) {
-            System.out.println(e);
-            return 0;
-        }
-    }
-
-    public int calculateAttackStat(Classes.Nature nature) {
-        try {
-            int baseAttack = Integer.parseInt(BaseAttack.getText());
-            int ivAttack = Integer.parseInt(IvAttack.getText());
-            int evAttack = Integer.parseInt(EvAttack.getText());
-            int level = Integer.parseInt(Level.getText());
-            double natureMultiplier = (nature.StatUp.equals("Attack") && !nature.StatDown.equals("Attack")) ? 1.1 : (nature.StatDown.equals("Attack") && !nature.StatUp.equals("Attack")) ? 0.9 : 1;
-
-            double tempAttack = ((((2 * baseAttack + ivAttack + (evAttack / 4)) * level) / 100) + 5) * natureMultiplier;
-            return (int) tempAttack;
-        } catch (Exception e) {
-            System.out.println(e);
-            return 0;
-        }
-    }
-
-    public int calculateDefenseStat(Classes.Nature nature) {
-        try {
-            int baseDefense = Integer.parseInt(BaseDefense.getText());
-            int ivDefense = Integer.parseInt(IvDefense.getText());
-            int evDefense = Integer.parseInt(EvDefense.getText());
-            int level = Integer.parseInt(Level.getText());
-            double natureMultiplier = (nature.StatUp.equals("Defense") && !nature.StatDown.equals("Defense")) ? 1.1 : (nature.StatDown.equals("Defense") && !nature.StatUp.equals("Defense")) ? 0.9 : 1;
-
-            double tempDefense = ((((2 * baseDefense + ivDefense + (evDefense / 4)) * level) / 100) + 5) * natureMultiplier;
-            return (int) tempDefense;
-        } catch (Exception e) {
-            System.out.println(e);
-            return 0;
-        }
-    }
-
-    public int calculateSpecialAttackStat(Classes.Nature nature) {
-        try {
-            int baseSpecialAttack = Integer.parseInt(BaseSpecialAttack.getText());
-            int ivSpecialAttack = Integer.parseInt(IvSpecialAttack.getText());
-            int evSpecialAttack = Integer.parseInt(EvSpecialAttack.getText());
-            int level = Integer.parseInt(Level.getText());
-            double natureMultiplier = (nature.StatUp.equals("SpecialAttack") && !nature.StatDown.equals("SpecialAttack")) ? 1.1 : (nature.StatDown.equals("SpecialAttack") && !nature.StatUp.equals("SpecialAttack")) ? 0.9 : 1;
-
-            double tempSpecialAttack = ((((2 * baseSpecialAttack + ivSpecialAttack + (evSpecialAttack / 4)) * level) / 100) + 5) * natureMultiplier;
-            return (int) tempSpecialAttack;
-        } catch (Exception e) {
-            System.out.println(e);
-            return 0;
-        }
-    }
-
-    public int calculateSpecialDefenseStat(Classes.Nature nature) {
-        try {
-            int baseSpecialDefense = Integer.parseInt(BaseSpecialDefense.getText());
-            int ivSpecialDefense = Integer.parseInt(IvSpecialDefense.getText());
-            int evSpecialDefense = Integer.parseInt(EvSpecialDefense.getText());
-            int level = Integer.parseInt(Level.getText());
-            double natureMultiplier = (nature.StatUp.equals("SpecialDefense") && !nature.StatDown.equals("SpecialDefense")) ? 1.1 : (nature.StatDown.equals("SpecialDefense") && !nature.StatUp.equals("SpecialDefense")) ? 0.9 : 1;
-
-            double tempSpecialDefense = ((((2 * baseSpecialDefense + ivSpecialDefense + (evSpecialDefense / 4)) * level) / 100) + 5) * natureMultiplier;
-            return (int) tempSpecialDefense;
-        } catch (Exception e) {
-            System.out.println(e);
-            return 0;
-        }
-    }
-
-    public int calculateSpeedStat(Classes.Nature nature) {
-        try {
-            int baseSpeed = Integer.parseInt(BaseSpeed.getText());
-            int ivSpeed = Integer.parseInt(IvSpeed.getText());
-            int evSpeed = Integer.parseInt(EvSpeed.getText());
-            int level = Integer.parseInt(Level.getText());
-            double natureMultiplier = (nature.StatUp.equals("Speed") && !nature.StatDown.equals("Speed")) ? 1.1 : (nature.StatDown.equals("Speed") && !nature.StatUp.equals("Speed")) ? 0.9 : 1;
-
-            double tempSpeed = ((((2 * baseSpeed + ivSpeed + (evSpeed / 4)) * level) / 100) + 5) * natureMultiplier;
-            return (int) tempSpeed;
-        } catch (Exception e) {
-            System.out.println(e);
-            return 0;
-        }
-    }
-
     // -------------------------- Options-Pokemon --------------------------
     public void addPokemon() {
         if (SpeciesName.getValue().pokemonStatsId > 0) {
@@ -715,9 +358,10 @@ public class TrainerController {
     }
 
     private void selectNewFirstPokemon() {
+        Data.dataSingleton data = Data.dataSingleton.getInstance();
         TrainerView tv = new TrainerView();
-        tv.setPokemon(new PokemonList(0,  "No Pokemon", 0, 0));
-        selectPokemonOnTheMenu(tv.tempPokemon);
+        tv.setPokemon(data.pokemonList);
+        selectPokemonOnTheMenu(data.tempPokemon);
     }
 
     private void deletePokemonFromPokemonList() {

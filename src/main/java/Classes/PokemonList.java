@@ -1,6 +1,8 @@
 package Classes;
 
-public class PokemonList  {
+import Classes.Abstract.BasicPokemon;
+
+public class PokemonList extends BasicPokemon {
     public int pokemonId;
     public String nickname;
     public int pokemonStatsId;

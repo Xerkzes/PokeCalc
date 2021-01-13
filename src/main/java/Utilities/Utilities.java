@@ -4,11 +4,14 @@ import Classes.*;
 import View.MenuView;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 
 import java.util.ArrayList;
 
@@ -91,15 +94,34 @@ public class Utilities {
         return -1;
     }
 
-    public static void setPokemonSpriteAndNickName(Pokemon pokemon, Label label, ImageView imageview) {
-        API.Database dbAPI = new API.Database();
-        if (pokemon.pokemonStatsId > 0) {
-            int spriteId = dbAPI.getSpriteIdFromSpecificPokemon(pokemon.pokemonStatsId);
-            String spritePath = dbAPI.getImagePathFromSpriteID(spriteId);
-            imageview.setImage(new Image(spritePath));
-        } else imageview.setImage(new Image("Img/Pokeballs/000.png"));
+    public static int getMove(int moveId, ObservableList<Attack> attackList) {
+        int index = 0;
+        for (Attack item : attackList) {
+            if (item.attackId == moveId) {
+                return index;
+            }
+            index++;
+        }
+        return 0;
+    }
 
-        label.setText(pokemon.nickname);
+    public static int findTrainerSprite(Trainer trainer, VBox trainerSpriteContainer) {
+        API.Database dbAPI = new API.Database();
+        int trainerSpriteId = dbAPI.getSpriteIdFromSpecificTrainer(trainer.trainerId);
+
+        int index = 0;
+        for (Node node : trainerSpriteContainer.getChildren()) {
+            HBox hbox = (HBox) node;
+            Label spriteIdLabel = (Label) hbox.getChildren().get(2);
+            int spriteId = Integer.parseInt(spriteIdLabel.getText());
+
+            if (spriteId == trainerSpriteId) {
+                return index;
+            }
+            index++;
+        }
+
+        return 0;
     }
 
     public static ArrayList<Attack> getAllAttackFromPokemon(Pokemon pokemon) {
@@ -112,7 +134,7 @@ public class Utilities {
         return userPokemonAttacks;
     }
 
-    // select Nature / Ability / Item / Moves
+    // select or set Nature / Ability / Item / Moves
     public static void selectSpecies(String nameOfPokemon, ObservableList<PokeStatsList> list, ComboBox<PokeStatsList> cb) {
         int index = 0;
         for (PokeStatsList item : list) {
@@ -195,10 +217,33 @@ public class Utilities {
         pokeballBox.getSelectionModel().select(index);
     }
 
+    public static void selectPokeball(String pokeball, ObservableList<Sprite> pokeballSprites, ComboBox<Sprite> pokeballBox) {
+        int index = 0;
+
+        for (Sprite sprite : pokeballSprites) {
+            if (sprite.spriteName.equals(pokeball)) {
+                break;
+            }
+            index++;
+        }
+
+        pokeballBox.getSelectionModel().select(index);
+    }
+
+    public static void setPokemonSpriteAndNickName(Pokemon pokemon, Label label, ImageView imageview) {
+        API.Database dbAPI = new API.Database();
+        if (pokemon.pokemonStatsId > 0) {
+            int spriteId = dbAPI.getSpriteIdFromSpecificPokemon(pokemon.pokemonStatsId);
+            String spritePath = dbAPI.getImagePathFromSpriteID(spriteId);
+            imageview.setImage(new Image(spritePath));
+        } else imageview.setImage(new Image("Img/Pokeballs/000.png"));
+
+        label.setText(pokemon.nickname);
+    }
+
     // -------------------------- Calculation --------------------------
     public static int calculateHpStat(int baseHp, int ivHp, int evHp, int level) {
         return (int) Math.floor(((baseHp * 2 + ivHp + Math.floor(evHp / 4.0)) * level) / 100) + level + 10;
-//        return (((2 * baseHp + ivHp + (evHp / 4)) * level) / 100) + level + 10;
     }
 
     public static int calculateStatWithBadge(Nature nature, int base, int iv, int ev, int level, String stat, Badge badge, boolean haveBadge) {
@@ -317,12 +362,6 @@ public class Utilities {
         else if (weight <= 199.9) return 100;
         else return 120;
     }
-
 }
-//    public static int calculateStat(Nature nature, int base, int iv, int ev, int level, String stat) {
-//        double natureMultiplier = (nature.StatUp.equals(stat) && !nature.StatDown.equals(stat)) ? 1.1 : (nature.StatDown.equals(stat) && !nature.StatUp.equals(stat)) ? 0.9 : 1;
-//        double tempAttack = ((((2 * base + iv + (ev / 4)) * level) / 100) + 5) * natureMultiplier;
-//        return (int) tempAttack;
-//    }
 
 

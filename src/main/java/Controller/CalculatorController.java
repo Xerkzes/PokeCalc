@@ -1,7 +1,6 @@
 package Controller;
 
 import Classes.*;
-import View.MenuView;
 import Utilities.Utilities;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -401,14 +400,6 @@ public class CalculatorController {
     // Lists
     public ArrayList<PokemonList> userPokemonList;
     public ArrayList<Badge> badgeList;
-    public ObservableList<PokeStatsList> speciesList;
-    public ObservableList<Nature> natureList;
-    public ObservableList<Ability> abilityList;
-    public ObservableList<Item> itemList;
-    public ObservableList<Attack> attackList;
-    public ObservableList<Route> metLocations;
-    public ObservableList<Sprite> pokeballs;
-
 
     // setUp Variables
     @FXML
@@ -428,9 +419,7 @@ public class CalculatorController {
 
     // -------------------------------------------- Events --------------------------------------------
     public void backToMenu() {
-        Data.dataSingleton data = Data.dataSingleton.getInstance();
-        MenuView pv = new MenuView();
-        pv.createMenuPage(data.getStage());
+        Utilities.backToMenu();
     }
 
     public void damagePercentage() {
@@ -2289,7 +2278,7 @@ public class CalculatorController {
         Nature nature = dbAPI.getNatureFromNatureName(pokemon.natureName);
         // sets Main
         UserPokemonNickname.setText(pokemon.nickname);
-        if (pokeStats != null) Utilities.selectSpecies(pokeStats.nameOfPokemon, speciesList, UserPokemonSpecies); else UserPokemonSpecies.setValue(null);
+        if (pokeStats != null) Utilities.selectSpecies(pokeStats.nameOfPokemon, UserPokemonSpecies.getItems(), UserPokemonSpecies); else UserPokemonSpecies.setValue(null);
         if (pokemonTypes != null) selecPokemonType(pokemonTypes, UserPokemonType1, UserPokemonType2);
         else { UserPokemonType1.getSelectionModel().selectFirst(); UserPokemonType2.getSelectionModel().selectFirst(); }
         if (pokeStats != null) UserPokemonForm.setValue(pokeStats.nameOfPokemon); else UserPokemonForm.setValue("");
@@ -2300,9 +2289,9 @@ public class CalculatorController {
         if (pokeStats == null) pokeStats = new PokeStats(0,"",0,"Slow",0,0,0,0,0,0,0,0);
         setUserBaseIvEvStats(pokemon, pokeStats);
         // Nature / Ability / Item / Status
-        Utilities.selectNature(pokemon.natureName, natureList, UserPokemonNature);
-        if (pokemon.abilityId > 0) Utilities.selectAbility(pokemon.abilityId, abilityList, UserPokemonAbility); else UserPokemonAbility.getSelectionModel().selectFirst();
-        if (item != null) Utilities.selectHeldItem(pokemon.itemId, itemList, UserPokemonItem); else UserPokemonItem.getSelectionModel().selectFirst();
+        Utilities.selectNature(pokemon.natureName, UserPokemonNature.getItems(), UserPokemonNature);
+        if (pokemon.abilityId > 0) Utilities.selectAbility(pokemon.abilityId, UserPokemonAbility.getItems(), UserPokemonAbility); else UserPokemonAbility.getSelectionModel().selectFirst();
+        if (item != null) Utilities.selectHeldItem(pokemon.itemId, UserPokemonItem.getItems(), UserPokemonItem); else UserPokemonItem.getSelectionModel().selectFirst();
         UserPokemonStatus.getSelectionModel().selectFirst();
         // select Boosts
         UserPokemonAttackBoost.getSelectionModel().select(6);
@@ -2316,9 +2305,9 @@ public class CalculatorController {
         UserPokemonMaxHp.setText("/" + hp);
         UserPokemonCurrentHPPercentage.setText("100");
         // MetLocations
-        if (pokemon.metLocation > 0) Utilities.selectMetLocation(pokemon.metLocation, metLocations, UserPokemonMetLocation); else UserPokemonMetLocation.getSelectionModel().selectFirst();
+        if (pokemon.metLocation > 0) Utilities.selectMetLocation(pokemon.metLocation, UserPokemonMetLocation.getItems(), UserPokemonMetLocation); else UserPokemonMetLocation.getSelectionModel().selectFirst();
         // Pokeballs
-        if (pokemon.pokeball > 0) Utilities.selectPokeball(pokemon.pokeball, pokeballs, UserPokemonPokeball); else UserPokemonPokeball.getSelectionModel().selectFirst();
+        if (pokemon.pokeball > 0) Utilities.selectPokeball(pokemon.pokeball, UserPokemonPokeball.getItems(), UserPokemonPokeball); else UserPokemonPokeball.getSelectionModel().selectFirst();
         // Moves
         setUserPokemonAttacks(attackList);
         // Calculate Total Stats / HP / Attack / Defense / SpeAttack / SpeDefense / Speed
@@ -2541,28 +2530,28 @@ public class CalculatorController {
             Attack attack = dbAPI.getAttackFromAttackId(at.get(i).attackId);
             switch (i) {
                 case 0 -> {
-                    Utilities.selectMove(attack.attackId, attackList, UserPokemonAttack1);
+                    Utilities.selectMove(attack.attackId, UserPokemonAttack1.getItems(), UserPokemonAttack1);
                     userMove1Attack.setText(attack.attackName);
                     setUserAttackValues(1, attack);
                     if (attack.attackId > 0) userMove1Attack.setText(attack.attackName);
                     else userMove1Attack.setText("No Move");
                 }
                 case 1 -> {
-                    Utilities.selectMove(attack.attackId, attackList, UserPokemonAttack2);
+                    Utilities.selectMove(attack.attackId, UserPokemonAttack2.getItems(), UserPokemonAttack2);
                     userMove2Attack.setText(attack.attackName);
                     setUserAttackValues(2, attack);
                     if (attack.attackId > 0) userMove2Attack.setText(attack.attackName);
                     else userMove1Attack.setText("No Move");
                 }
                 case 2 -> {
-                    Utilities.selectMove(attack.attackId, attackList, UserPokemonAttack3);
+                    Utilities.selectMove(attack.attackId, UserPokemonAttack3.getItems(), UserPokemonAttack3);
                     userMove3Attack.setText(attack.attackName);
                     setUserAttackValues(3, attack);
                     if (attack.attackId > 0) userMove3Attack.setText(attack.attackName);
                     else userMove1Attack.setText("No Move");
                 }
                 case 3 -> {
-                    Utilities.selectMove(attack.attackId, attackList, UserPokemonAttack4);
+                    Utilities.selectMove(attack.attackId, UserPokemonAttack4.getItems(), UserPokemonAttack4);
                     userMove4Attack.setText(attack.attackName);
                     setUserAttackValues(4, attack);
                     if (attack.attackId > 0) userMove4Attack.setText(attack.attackName);
@@ -2577,22 +2566,22 @@ public class CalculatorController {
                 case 0 -> {
                     UserPokemonAttack1.getSelectionModel().selectFirst();
                     userMove1Attack.setText("No Move");
-                    setUserAttackValues(1, attackList.get(0));
+                    setUserAttackValues(1, UserPokemonAttack1.getItems().get(0));
                 }
                 case 1 -> {
                     UserPokemonAttack2.getSelectionModel().selectFirst();
                     userMove2Attack.setText("No Move");
-                    setUserAttackValues(2, attackList.get(0));
+                    setUserAttackValues(2, UserPokemonAttack2.getItems().get(0));
                 }
                 case 2 -> {
                     UserPokemonAttack3.getSelectionModel().selectFirst();
                     userMove3Attack.setText("No Move");
-                    setUserAttackValues(3, attackList.get(0));
+                    setUserAttackValues(3, UserPokemonAttack3.getItems().get(0));
                 }
                 case 3 -> {
                     UserPokemonAttack4.getSelectionModel().selectFirst();
                     userMove4Attack.setText("No Move");
-                    setUserAttackValues(4, attackList.get(0));
+                    setUserAttackValues(4, UserPokemonAttack4.getItems().get(0));
                 }
             }
         }
@@ -2845,7 +2834,7 @@ public class CalculatorController {
         Nature nature = dbAPI.getNatureFromNatureName(pokemon.natureName);
         // sets Main
         FoePokemonNickname.setText(pokemon.nickname);
-        if (pokeStats != null) Utilities.selectSpecies(pokeStats.nameOfPokemon, speciesList, FoePokemonSpecies); else FoePokemonSpecies.setValue(null);
+        if (pokeStats != null) Utilities.selectSpecies(pokeStats.nameOfPokemon, FoePokemonSpecies.getItems(), FoePokemonSpecies); else FoePokemonSpecies.setValue(null);
         if (pokemonTypes != null) selecPokemonType(pokemonTypes, FoePokemonType1, FoePokemonType2);
         else { FoePokemonType1.getSelectionModel().selectFirst(); FoePokemonType2.getSelectionModel().selectFirst(); }
         if (pokeStats != null) FoePokemonForm.setValue(pokeStats.nameOfPokemon); else FoePokemonForm.setValue("");
@@ -2856,9 +2845,9 @@ public class CalculatorController {
         if (pokeStats == null) pokeStats = new PokeStats(0,"",0,"Slow",0,0,0,0,0,0,0,0);
         setFoeBaseIvEvStats(pokemon, pokeStats);
         // Nature / Ability / Item / Status
-        Utilities.selectNature(pokemon.natureName, natureList, FoePokemonNature);
-        if (pokemon.abilityId > 0) Utilities.selectAbility(pokemon.abilityId, abilityList, FoePokemonAbility);
-        if (item != null) Utilities.selectHeldItem(pokemon.itemId, itemList, FoePokemonItem); else FoePokemonItem.getSelectionModel().selectFirst();
+        Utilities.selectNature(pokemon.natureName, FoePokemonNature.getItems(), FoePokemonNature);
+        if (pokemon.abilityId > 0) Utilities.selectAbility(pokemon.abilityId, FoePokemonAbility.getItems(), FoePokemonAbility);
+        if (item != null) Utilities.selectHeldItem(pokemon.itemId, FoePokemonItem.getItems(), FoePokemonItem); else FoePokemonItem.getSelectionModel().selectFirst();
         FoePokemonStatus.getSelectionModel().selectFirst();
         // select Boosts
         FoePokemonAttackBoost.getSelectionModel().select(6);
@@ -2872,9 +2861,9 @@ public class CalculatorController {
         FoePokemonMaxHp.setText("/" + hp);
         FoePokemonCurrentHPPercentage.setText("100");
         // MetLocations
-        if (pokemon.metLocation > 0) Utilities.selectMetLocation(pokemon.metLocation, metLocations, FoePokemonMetLocation); else FoePokemonMetLocation.getSelectionModel().selectFirst();
+        if (pokemon.metLocation > 0) Utilities.selectMetLocation(pokemon.metLocation, FoePokemonMetLocation.getItems(), FoePokemonMetLocation); else FoePokemonMetLocation.getSelectionModel().selectFirst();
         // Pokeballs
-        if (pokemon.pokeball > 0) Utilities.selectPokeball(pokemon.pokeball, pokeballs, FoePokemonPokeball); else FoePokemonPokeball.getSelectionModel().selectFirst();
+        if (pokemon.pokeball > 0) Utilities.selectPokeball(pokemon.pokeball, FoePokemonPokeball.getItems(), FoePokemonPokeball); else FoePokemonPokeball.getSelectionModel().selectFirst();
         // Moves
         setFoePokemonAttacks(attackList);
         // Calculate Total Stats / HP / Attack / Defense / SpeAttack / SpeDefense / Speed
@@ -3082,22 +3071,22 @@ public class CalculatorController {
             Attack attack = dbAPI.getAttackFromAttackId(at.get(i).attackId);
             switch (i) {
                 case 0 -> {
-                    Utilities.selectMove(attack.attackId, attackList, FoePokemonAttack1);
+                    Utilities.selectMove(attack.attackId, FoePokemonAttack1.getItems(), FoePokemonAttack1);
                     foeMove1Attack.setText(attack.attackName);
                     setTrainerAttackValues(1, attack);
                 }
                 case 1 -> {
-                    Utilities.selectMove(attack.attackId, attackList, FoePokemonAttack2);
+                    Utilities.selectMove(attack.attackId, FoePokemonAttack2.getItems(), FoePokemonAttack2);
                     foeMove2Attack.setText(attack.attackName);
                     setTrainerAttackValues(2, attack);
                 }
                 case 2 -> {
-                    Utilities.selectMove(attack.attackId, attackList, FoePokemonAttack3);
+                    Utilities.selectMove(attack.attackId, FoePokemonAttack3.getItems(), FoePokemonAttack3);
                     foeMove3Attack.setText(attack.attackName);
                     setTrainerAttackValues(3, attack);
                 }
                 case 3 -> {
-                    Utilities.selectMove(attack.attackId, attackList, FoePokemonAttack4);
+                    Utilities.selectMove(attack.attackId, FoePokemonAttack4.getItems(), FoePokemonAttack4);
                     foeMove4Attack.setText(attack.attackName);
                     setTrainerAttackValues(4, attack);
                 }
@@ -3110,22 +3099,22 @@ public class CalculatorController {
                 case 0 -> {
                     FoePokemonAttack1.getSelectionModel().selectFirst();
                     foeMove1Attack.setText("No Move");
-                    setTrainerAttackValues(1, attackList.get(0));
+                    setTrainerAttackValues(1, FoePokemonAttack1.getItems().get(0));
                 }
                 case 1 -> {
                     FoePokemonAttack2.getSelectionModel().selectFirst();
                     foeMove2Attack.setText("No Move");
-                    setTrainerAttackValues(2, attackList.get(0));
+                    setTrainerAttackValues(2, FoePokemonAttack2.getItems().get(0));
                 }
                 case 2 -> {
                     FoePokemonAttack3.getSelectionModel().selectFirst();
                     foeMove3Attack.setText("No Move");
-                    setTrainerAttackValues(3, attackList.get(0));
+                    setTrainerAttackValues(3, FoePokemonAttack3.getItems().get(0));
                 }
                 case 3 -> {
                     FoePokemonAttack4.getSelectionModel().selectFirst();
                     foeMove4Attack.setText("No Move");
-                    setTrainerAttackValues(4, attackList.get(0));
+                    setTrainerAttackValues(4, FoePokemonAttack4.getItems().get(0));
                 }
             }
         }
@@ -3159,7 +3148,7 @@ public class CalculatorController {
             speedBadgeBoolean = speedBadge.ownBadge;
             setBadgeSprites();
             // Species
-            speciesList = dbAPI.getPokeStatsListFromSpecificGame(data.getGameName());
+            ObservableList<PokeStatsList> speciesList = dbAPI.getPokeStatsListFromSpecificGame(data.getGameName());
             UserPokemonSpecies.setItems(speciesList);
             FoePokemonSpecies.setItems(speciesList);
             // Types
@@ -3187,15 +3176,15 @@ public class CalculatorController {
             FoePokemonSpecialDefenseBoost.setItems(boosts);
             FoePokemonSpeedBoost.setItems(boosts);
             // Nature
-            natureList = dbAPI.getAllNature();
+            ObservableList<Nature> natureList = dbAPI.getAllNature();
             UserPokemonNature.setItems(natureList);
             FoePokemonNature.setItems(natureList);
             // Abilities
-            abilityList = dbAPI.getAllAbilitiesFromGame(data.getGameName());
+            ObservableList<Ability> abilityList = dbAPI.getAllAbilitiesFromGame(data.getGameName());
             UserPokemonAbility.setItems(abilityList);
             FoePokemonAbility.setItems(abilityList);
             // Item
-            itemList = FXCollections.observableArrayList();
+            ObservableList<Item> itemList = FXCollections.observableArrayList();
             itemList.add(new Item(-1, -1, "", "", 0, 0, 0));
             itemList.addAll(dbAPI.getAllItemsFromGame(data.getGameName()));
             UserPokemonItem.setItems(itemList);
@@ -3205,15 +3194,15 @@ public class CalculatorController {
             UserPokemonStatus.setItems(status);
             FoePokemonStatus.setItems(status);
             // MetLocation
-            metLocations = dbAPI.getALLMetLocationsFromGame(data.getGameName());
+            ObservableList<Route> metLocations = dbAPI.getALLMetLocationsFromGame(data.getGameName());
             UserPokemonMetLocation.setItems(metLocations);
             FoePokemonMetLocation.setItems(metLocations);
             // Pokeball
-            pokeballs = dbAPI.getAllPokeballs();
+            ObservableList<Sprite> pokeballs = dbAPI.getAllPokeballs();
             UserPokemonPokeball.setItems(pokeballs);
             FoePokemonPokeball.setItems(pokeballs);
             // Attacks
-            attackList = FXCollections.observableArrayList();
+            ObservableList<Attack> attackList = FXCollections.observableArrayList();
             attackList.add(new Attack(-1, "", "", "", 0, 0, "", "", 0, "", "", false, false, false, false, false, false));
             attackList.addAll(dbAPI.getAllAttacksFromGame(data.getGameName()));
             setGlobalPokemonAttack(UserPokemonAttack1, UserPokemonAttack1Type, UserPokemonAttack1Category, attackList, types);
