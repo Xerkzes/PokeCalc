@@ -708,7 +708,8 @@ public class Database {
 
             // make query
             String query = "SELECT * FROM sprite " +
-                    "WHERE locationofsprite like '/Img/Trainers/%'";
+                    "WHERE locationofsprite like '/Img/Trainers/%' " +
+                    "ORDER BY spritename ASC";
 
             // prepare query
             PreparedStatement stmt = connection.prepareStatement(query);
@@ -725,7 +726,6 @@ public class Database {
 
                 trainerSpriteList.add(new Sprite(spriteID, gameName, routeName));
             }
-
             connection.close();
             return trainerSpriteList;
         } catch (Exception e) {
@@ -733,7 +733,7 @@ public class Database {
             e.printStackTrace();
         }
 
-        return null;
+        return FXCollections.observableArrayList();
     }
 
     public ObservableList<String> getAllTypeFromSpecificGame(String gameName) {
@@ -1259,8 +1259,10 @@ public class Database {
             // execute query
             stmt.execute();
             if (template.equals("Default")) return true;
+            // todo -> template of new Game
+            // else get the template setting and set them
 
-            // else get the template setting and set them ...
+
 
             connection.close();
             return true;
@@ -1776,12 +1778,53 @@ public class Database {
         try {
             connectToDB();
 
-            // make query
-            String query = "DELETE FROM gamename " +
-                    "WHERE gamename = ?";
-
+            // ------ delete all trainers ------
+            String query = "DELETE FROM trainersprite " +
+                    "WHERE trainerid IN ( " +
+                    "SELECT trainer.trainerid FROM trainer " +
+                    "INNER JOIN trainersprite ON trainer.trainerid = trainersprite.trainerid " +
+                    "WHERE gamename = ? )";
             // prepare query
             PreparedStatement stmt = connection.prepareStatement(query);
+            stmt.setString(1, name);
+            // execute query
+            stmt.execute();
+
+            // ------ delete all trainers pokemons ------
+            query = "DELETE FROM trainerpokemon " +
+                    "WHERE trainerid IN ( " +
+                    "SELECT trainer.trainerid FROM trainer " +
+                    "INNER JOIN trainerpokemon ON trainer.trainerid = trainerpokemon.trainerid " +
+                    "WHERE gamename = ? )";
+            // prepare query
+            stmt = connection.prepareStatement(query);
+            stmt.setString(1, name);
+            // execute query
+            stmt.execute();
+
+            // ------ delete all badges ------
+            query = "DELETE FROM badge " +
+                    "WHERE gamename = ?";
+            // prepare query
+            stmt = connection.prepareStatement(query);
+            stmt.setString(1, name);
+            // execute query
+            stmt.execute();
+
+            // ------ delete all movesets ------
+            query = "DELETE FROM moveset " +
+                    "WHERE gamename = ?";
+            // prepare query
+            stmt = connection.prepareStatement(query);
+            stmt.setString(1, name);
+            // execute query
+            stmt.execute();
+
+            // ------ delete Game ------
+            query = "DELETE FROM gamename " +
+                    "WHERE gamename = ?";
+            // prepare query
+            stmt = connection.prepareStatement(query);
             stmt.setString(1, name);
             // execute query
             stmt.execute();
@@ -1790,6 +1833,7 @@ public class Database {
             return true;
         } catch (Exception e) {
             System.out.println(e);
+            e.printStackTrace();
             return false;
         }
     }
@@ -1887,7 +1931,6 @@ public class Database {
         }
     }
 
-    // todo -> delete Pokemons From Trainer
     public boolean deleteTrainerAndPokemons(int trainerId) {
         try {
             connectToDB();

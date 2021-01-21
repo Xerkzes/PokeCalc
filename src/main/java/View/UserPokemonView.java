@@ -5,9 +5,10 @@ import Intefaces.InterfacePokemonView;
 import Controller.UserPokemonController;
 import Utilities.Utilities;
 import javafx.collections.FXCollections;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
@@ -30,16 +31,17 @@ public class UserPokemonView implements InterfacePokemonView {
             Scene scene = new Scene(fxmlFile);
             scene.getStylesheets().add(String.valueOf(getClass().getResource("/CSS/style.css")));
             stage.setTitle("Add Pokemon To the User");
-            stage.setScene(scene);
-            stage.show();
 
             controller = UserPokemonController.getInstance();
             dbAPI = new API.Database();
             data = Data.dataSingleton.getInstance();
-
             loadUserPokemons();
             loadDynamicContent();
             selectFirstPokemon();
+
+            stage.setScene(scene);
+            stage.show();
+
         }
     }
 
@@ -52,7 +54,12 @@ public class UserPokemonView implements InterfacePokemonView {
             controller.activePokemon = (HBox) controller.PokemonContainer.getChildren().get(0);
             previousPokemonBox = (HBox) controller.PokemonContainer.getChildren().get(0);
 
-            this.setPokemonStats(controller.pokeStatsList.get(0), controller);
+            EventHandler<ActionEvent> speciesHandler = controller.SpeciesName.getOnAction();
+            controller.SpeciesName.setOnAction(null);
+            controller.SpeciesName.getSelectionModel().selectFirst();
+            controller.SpeciesName.setOnAction(speciesHandler);
+
+            setPokemonStats(controller.pokeStatsList.get(0), controller);
             setPokemonOptions(controller.pokeStatsList.get(0));
         } catch (Exception e) {
             System.out.println("You don't have any Pokemons. Error: " + e);
@@ -74,7 +81,7 @@ public class UserPokemonView implements InterfacePokemonView {
                 createPokemonLabel(pokeList);
             }
 
-            this.loadGlobalContent(data.getGameName(), controller); // Nature / Item / Ability ...
+            loadGlobalContent(data.getGameName(), controller); // Nature / Item / Ability ...
         } catch (Exception e) {
             System.out.println("There are no Pokemons in your Game Error: " + e);
 //            e.printStackTrace();
@@ -99,28 +106,21 @@ public class UserPokemonView implements InterfacePokemonView {
 
     // Create Pokemon Label
     public void createPokemonLabel(PokemonList pokemon) {
-        HBox hbox = new HBox(5);
-        // Label
-        Label smallSprite = new Label();
-        // Set small Pokemon Sprite
-        Utilities ut = new Utilities();
-        if (pokemon.pokemonStatsId > 0) ut.setSmallSpriteNextToLabel(smallSprite, dbAPI.getSpriteIdFromSpecificPokemon(pokemon.pokemonStatsId));
-        // dexNr and Name
-        Label dexNr = new Label();
-        if (pokemon.pokemonStatsId > 0) dexNr = new Label(String.format("%03d", pokemon.dexNr));
-        Label btn = new Label(pokemon.nickname);
-        // CSS
-        hbox.getStyleClass().add("createPokemonHBox");
-        dexNr.getStyleClass().add("createPokemonLabel");
-        btn.getStyleClass().add("createPokemonLabel");
+        HBox hbox = pokemon.createPokemonLabel();
 
         // add EventListener
-        Label finalDexNr = dexNr;
+        setPokemonEventHandler(hbox, pokemon);
+
+        // add To Controller
+        controller.PokemonContainer.getChildren().add(hbox);
+    }
+
+    public void setPokemonEventHandler(HBox hbox, PokemonList pokemon) {
         hbox.addEventHandler(MouseEvent.MOUSE_CLICKED, mouseEvent -> {
             // set CSS
             setCssOfActiveBox(hbox);
             // set Values
-            this.setPokemonStats(pokemon, controller);
+            setPokemonStats(pokemon, controller);
             // set Pokemon Options
             setPokemonOptions(pokemon);
             // set pokemonStatsId
@@ -128,15 +128,10 @@ public class UserPokemonView implements InterfacePokemonView {
             controller.pokemonStatsId = pokemon.pokemonStatsId;
             // set activePokemon
             controller.activePokemon = hbox;
-            controller.activePokemonSprite = smallSprite;
-            controller.activePokemonDexNr = finalDexNr;
-            controller.activePokemonNickname = btn;
+            controller.activePokemonSprite = pokemon.getSpriteLabel(hbox);
+            controller.activePokemonDexNr = pokemon.getDexNrLabel(hbox);
+            controller.activePokemonNickname = pokemon.getNameLabel(hbox);
         });
-
-        // add to HBox
-        hbox.getChildren().addAll(smallSprite, dexNr, btn);
-        // add To Controller
-        controller.PokemonContainer.getChildren().add(hbox);
     }
 
     private void setPokemonOptions(PokemonList pokemon) {
@@ -157,7 +152,7 @@ public class UserPokemonView implements InterfacePokemonView {
 
     // load User Pokemons
     private void loadUserPokemons() {
-        controller.userPokemonList = dbAPI.getAllPokemonFromUser(data.getGameName());
+        controller.userPokemonList = FXCollections.observableArrayList(dbAPI.getAllPokemonFromUser(data.getGameName()));
 
         for (PokemonList pokeList : controller.userPokemonList) {
             createPokemonLabelForUser(pokeList);
@@ -165,26 +160,21 @@ public class UserPokemonView implements InterfacePokemonView {
     }
 
     public void createPokemonLabelForUser(PokemonList pokemon) {
-        HBox hbox = new HBox(5);
-        // Label
-        Label smallSprite = new Label();
-        // Set small Pokemon Sprite
-        Utilities ut = new Utilities();
-        ut.setSmallSpriteNextToLabel(smallSprite, dbAPI.getSpriteIdFromSpecificPokemon(pokemon.pokemonStatsId));
-        // dexNr and Name
-        Label dexNr = new Label(String.format("%03d", pokemon.dexNr));
-        Label btn = new Label(pokemon.nickname);
-        // CSS
-        hbox.getStyleClass().add("createPokemonHBox");
-        dexNr.getStyleClass().add("createPokemonLabel");
-        btn.getStyleClass().add("createPokemonLabel");
+        HBox hbox =  pokemon.createPokemonLabel();
 
         // add EventListener
+        setUserPokemonEventHandler(hbox, pokemon);
+
+        // add To Controller
+        controller.UserPokemonContainer.getChildren().add(hbox);
+    }
+
+    public void setUserPokemonEventHandler(HBox hbox, PokemonList pokemon) {
         hbox.addEventHandler(MouseEvent.MOUSE_CLICKED, mouseEvent -> {
             // set CSS
             setCssOfActiveBox(hbox);
             // set Values
-            this.setPokemonStats(pokemon, controller);
+            setPokemonStats(pokemon, controller);
             // set Pokemon Options
             setTrainerPokemonOptions();
             // set pokemonStatsId
@@ -192,15 +182,10 @@ public class UserPokemonView implements InterfacePokemonView {
             controller.pokemonStatsId = pokemon.pokemonStatsId;
             // set activePokemon
             controller.activePokemon = hbox;
-            controller.activePokemonSprite = smallSprite;
-            controller.activePokemonDexNr = dexNr;
-            controller.activePokemonNickname = btn;
+            controller.activePokemonSprite = pokemon.getSpriteLabel(hbox);
+            controller.activePokemonDexNr = pokemon.getDexNrLabel(hbox);
+            controller.activePokemonNickname = pokemon.getNameLabel(hbox);
         });
-
-        // add to HBox
-        hbox.getChildren().addAll(smallSprite, dexNr, btn);
-        // add To Controller
-        controller.UserPokemonContainer.getChildren().add(hbox);
     }
 
     private void setTrainerPokemonOptions() {

@@ -1,6 +1,7 @@
 package Controller;
 
 import Classes.Route;
+import Classes.SearchFilter;
 import Classes.Sprite;
 import Classes.Trainer;
 import javafx.collections.FXCollections;
@@ -12,7 +13,9 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
@@ -29,16 +32,24 @@ public class AddTrainerController {
         controller = this;
     }
 
+    // Main
     public TextField TrainerName;
     public TextField FightNumber;
     public ComboBox<String> FoughtAlready;
     public ComboBox<Route> Route;
-    public VBox TrainerSpriteContainer;
+    // Sprite
     public Label TrainerSpriteBackground;
+    public TextField SpriteSearchField;
+    public AnchorPane SpriteAnchor;
+    public VBox TrainerSpriteContainer;
+    public VBox FilteredTrainerSpriteContainer;
+    // Options
     public Button CreateTrainerButton;
+    // variables
     Stage createTrainerStage;
     int trainerSpriteId;
     private HBox previousTrainerSpriteBox;
+    ObservableList<Sprite> trainerSpritesList;
 
 
     public void opensAddGameStage(Parent fxmlFile) {
@@ -54,6 +65,35 @@ public class AddTrainerController {
 
         loadContent();
     }
+
+    // ---------------- Search ----------------
+    public void searchForSprite(KeyEvent e) {
+        SearchFilter<Sprite> filter = new SearchFilter<>();
+        ObservableList<Sprite> list = filter.searchFor(e, FilteredTrainerSpriteContainer, SpriteSearchField, trainerSpritesList);
+
+        if (list != null) {
+            setTrainerSpriteContainerVisibility(true);
+            SpriteAnchor.getChildren().remove(TrainerSpriteContainer);
+            for (Sprite sprite : list) {
+                HBox hbox = sprite.createLabel();
+                setTrainerSpriteEventHandler(hbox, sprite);
+                FilteredTrainerSpriteContainer.getChildren().add(hbox);
+            }
+        } else {
+            try {
+                SpriteAnchor.getChildren().add(TrainerSpriteContainer);
+            } catch (Exception ignored) {}
+            setTrainerSpriteContainerVisibility(false);
+        }
+    }
+
+    private void setTrainerSpriteContainerVisibility(boolean b) {
+        // entire List
+        TrainerSpriteContainer.setVisible(!b);
+        // search List
+        FilteredTrainerSpriteContainer.setVisible(b);
+    }
+
 
     // --------------- load Content ---------------
     private void loadContent() {
@@ -81,7 +121,7 @@ public class AddTrainerController {
     private void loadTrainerSprites() {
         API.Database dbAPI = new API.Database();
 
-        ObservableList<Sprite> trainerSpritesList = dbAPI.getAllTrainerSprites();
+        trainerSpritesList = dbAPI.getAllTrainerSprites();
         for (Sprite trainerSprite : trainerSpritesList) {
             createTrainerSpriteLabel(trainerSprite);
         }
@@ -91,16 +131,16 @@ public class AddTrainerController {
     }
 
     private void createTrainerSpriteLabel(Sprite trainerSprite) {
-        HBox hbox = new HBox(5);
-        // Label
-        Label smallImages = new Label();
-        Label nameOfTrainer = new Label(trainerSprite.spriteName);
-        // CSS
-        hbox.getStyleClass().add("createPokemonHBox");
-        setSmallSpriteNextToLabel(smallImages, trainerSprite);
-        nameOfTrainer.getStyleClass().add("createPokemonLabel");
+        HBox hbox = trainerSprite.createLabel();
 
         // add EventListener
+        setTrainerSpriteEventHandler(hbox, trainerSprite);
+
+        // add To Controller
+        TrainerSpriteContainer.getChildren().add(hbox);
+    }
+
+    private void setTrainerSpriteEventHandler(HBox hbox, Sprite trainerSprite) {
         hbox.addEventHandler(MouseEvent.MOUSE_CLICKED, mouseEvent -> {
             // set CSS
             setCssOfActiveTrainerSpriteBox(hbox);
@@ -109,16 +149,6 @@ public class AddTrainerController {
             // set pokemonStatsId
             trainerSpriteId = trainerSprite.spriteId;
         });
-
-        // add to HBox
-        hbox.getChildren().addAll(smallImages, nameOfTrainer);
-        // add To Controller
-        TrainerSpriteContainer.getChildren().add(hbox);
-    }
-
-    private void setSmallSpriteNextToLabel(Label smallImages, Sprite sprite) {
-        smallImages.getStyleClass().add("createSmallSpriteNextToLabel");
-        smallImages.setStyle("-fx-background-image: url(" + this.getClass().getResource(sprite.locationOfSprite) + ");");
     }
 
     private void setCssOfActiveTrainerSpriteBox(HBox hbox) {

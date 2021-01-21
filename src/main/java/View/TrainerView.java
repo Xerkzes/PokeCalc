@@ -6,11 +6,8 @@ import Intefaces.InterfacePokemonView;
 import Utilities.Utilities;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.geometry.Pos;
-import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.input.MouseEvent;
@@ -23,12 +20,9 @@ public class TrainerView implements InterfacePokemonView {
     private static TrainerController controller;
     private static API.Database dbAPI;
     private static Data.dataSingleton data;
-    private static HBox previousTrainerSpriteBox;
+    public static HBox previousTrainerSpriteBox;
     public static HBox previousPokemonBox;
     private static HBox previousTrainerBox;
-    private static ObservableList<Sprite> trainerSpritesList;
-    public static ObservableList<Trainer> trainerList;
-    public static ObservableList<PokemonList> pokemonList;
 
     public void createPokemonPage(Stage stage) {
         // load fxml file
@@ -39,11 +33,13 @@ public class TrainerView implements InterfacePokemonView {
             Scene scene = new Scene(fxmlFile);
             scene.getStylesheets().add(String.valueOf(getClass().getResource("/CSS/style.css")));
             stage.setTitle("Edit Trainer");
-            stage.setScene(scene);
-            stage.show();
 
             loadDynamicContent();
             selectFirstTrainer();
+
+            stage.setScene(scene);
+            stage.show();
+
         }
     }
 
@@ -52,35 +48,47 @@ public class TrainerView implements InterfacePokemonView {
         dbAPI = new API.Database();
         data = Data.dataSingleton.getInstance();
 
-        this.loadGlobalContent(data.getGameName(), controller);
+        loadGlobalData();
         loadTrainerSprites();
         loadExistingTrainers();
         loadPokemons();
     }
 
+    private void loadGlobalData() {
+        loadGlobalContent(data.getGameName(), controller);
+        loadTrainerData();
+    }
+
+    private void loadTrainerData() {
+        // FoughtAlready
+        ObservableList<String> foughtAlready = FXCollections.observableArrayList("True", "False");
+        controller.FoughtAlready.setItems(foughtAlready);
+        // Locations
+        ObservableList<Route> metLocations = dbAPI.getALLMetLocationsFromGame(data.getGameName());
+        controller.Route.setItems(metLocations);
+
+        new AutoBoxComplete<>(controller.Route);
+    }
+
     // Trainer-Sprites
     private void loadTrainerSprites() {
-        trainerSpritesList = dbAPI.getAllTrainerSprites();
-        for (Sprite trainerSprite : trainerSpritesList) {
+        controller.trainerSpritesList = dbAPI.getAllTrainerSprites();
+        for (Sprite trainerSprite : controller.trainerSpritesList) {
             createTrainerSpriteLabel(trainerSprite);
         }
     }
 
     private void createTrainerSpriteLabel(Sprite trainerSprite) {
-        HBox hbox = new HBox(5);
-        // Label
-        Label smallImages = new Label();
-        Label nameOfTrainer = new Label(trainerSprite.spriteName);
-        // hidden identifier
-        Label identifier = new Label(Integer.toString(trainerSprite.spriteId));
-        identifier.setMaxWidth(0);
-        identifier.setVisible(false);
-        // CSS
-        hbox.getStyleClass().add("createPokemonHBox");
-        setSmallSpriteNextToLabel(smallImages, trainerSprite);
-        nameOfTrainer.getStyleClass().add("createPokemonLabel");
+        HBox hbox = trainerSprite.createLabel();
 
         // add EventListener
+        setTrainerSpriteEventHandler(hbox, trainerSprite);
+
+        // add To Controller
+        controller.TrainerSpriteContainer.getChildren().add(hbox);
+    }
+
+    public void setTrainerSpriteEventHandler(HBox hbox, Sprite trainerSprite) {
         hbox.addEventHandler(MouseEvent.MOUSE_CLICKED, mouseEvent -> {
             // set CSS
             setCssOfActiveTrainerSpriteBox(hbox);
@@ -89,21 +97,13 @@ public class TrainerView implements InterfacePokemonView {
             // set pokemonStatsId
             controller.trainerSpriteId = trainerSprite.spriteId;
         });
-
-        // add to HBox
-        hbox.getChildren().addAll(smallImages, nameOfTrainer, identifier);
-        // add To Controller
-        controller.TrainerSpriteContainer.getChildren().add(hbox);
-    }
-
-    private void setSmallSpriteNextToLabel(Label smallImages, Sprite sprite) {
-        smallImages.getStyleClass().add("createSmallSpriteNextToLabel");
-        smallImages.setStyle("-fx-background-image: url(" + this.getClass().getResource(sprite.locationOfSprite) + ");");
     }
 
     private void setCssOfActiveTrainerSpriteBox(HBox hbox) {
-        previousTrainerSpriteBox.getStyleClass().clear();
-        previousTrainerSpriteBox.getStyleClass().add("createPokemonHBox");
+        if (previousTrainerSpriteBox != null) {
+            previousTrainerSpriteBox.getStyleClass().clear();
+            previousTrainerSpriteBox.getStyleClass().add("createPokemonHBox");
+        }
         // change this PokemonBox to active background-color
         hbox.getStyleClass().clear();
         hbox.getStyleClass().add("createPokemonHBoxActive");
@@ -117,34 +117,25 @@ public class TrainerView implements InterfacePokemonView {
     // Existing Trainer
     private void loadExistingTrainers() {
         // get List with all the PokeStats
-        trainerList = FXCollections.observableArrayList(new Trainer(0, 0, "New Trainer", 0, false));
-        trainerList.addAll(dbAPI.getAllTrainerFromSpecificGame(data.getGameName()));
+        controller.trainerList = FXCollections.observableArrayList(new Trainer(0, 0, "New Trainer", 0, false));
+        controller.trainerList.addAll(dbAPI.getAllTrainerFromSpecificGame(data.getGameName()));
 
-        for (Trainer trainer : trainerList) {
+        for (Trainer trainer : controller.trainerList) {
             createTrainerLabel(trainer);
         }
     }
 
     public void createTrainerLabel(Trainer trainer) {
-        HBox hbox = new HBox(5);
-        hbox.setAlignment(Pos.CENTER_LEFT);
-        // Label
-        Label smallSprite = new Label();
-        // Set small Pokemon Sprite
-        Utilities ut = new Utilities();
-        if (trainer.trainerId > 0) ut.setSmallSpriteNextToLabel(smallSprite, dbAPI.getSpriteIdFromSpecificTrainer(trainer.trainerId));
-        // dexNr and Name
-        Label dexNr;
-        if (trainer.trainerId > 0) dexNr = new Label(Integer.toString(trainer.fightNumber));
-        else dexNr = new Label();
-        Label btn = new Label(trainer.trainerName);
-        // CSS
-        hbox.getStyleClass().add("createPokemonHBox");
-        if (trainer.trainerId > 0) smallSprite.getStyleClass().add("createSmallSpriteNextToLabel");
-        dexNr.getStyleClass().add("createPokemonLabel");
-        btn.getStyleClass().add("createPokemonLabel");
+        HBox hbox = trainer.createLabel();
 
         // add EventListener
+        setTrainerEventHandler(hbox, trainer);
+
+        // add To Controller
+        controller.TrainerContainer.getChildren().add(hbox);
+    }
+
+    public void setTrainerEventHandler(HBox hbox, Trainer trainer) {
         hbox.addEventHandler(MouseEvent.MOUSE_CLICKED, mouseEvent -> {
             // set CSS
             setCssOfActiveTrainerBox(hbox);
@@ -153,22 +144,19 @@ public class TrainerView implements InterfacePokemonView {
             // set the current Trainer Box
             controller.activeTrainerBox = hbox;
             controller.trainerId = trainer.trainerId;
-            controller.trainerSpriteLabel = smallSprite;
-            controller.fightNumberLabel = dexNr;
-            controller.trainerNameLabel = btn;
+            controller.trainerSpriteLabel = trainer.getSpriteLabel(hbox);
+            controller.fightNumberLabel = trainer.getFightNumberLabel(hbox);
+            controller.trainerNameLabel = trainer.getTrainerNameLabel(hbox);
             // set Trainer Options
             setTrainerOptions(trainer);
         });
-
-        // add to HBox
-        hbox.getChildren().addAll(smallSprite, dexNr, btn);
-        // add To Controller
-        controller.TrainerContainer.getChildren().add(hbox);
     }
 
     private void setCssOfActiveTrainerBox(HBox hbox) {
-        previousTrainerBox.getStyleClass().clear();
-        previousTrainerBox.getStyleClass().add("createPokemonHBox");
+        if (previousTrainerBox != null) {
+            previousTrainerBox.getStyleClass().clear();
+            previousTrainerBox.getStyleClass().add("createPokemonHBox");
+        }
         // change this PokemonBox to active background-color
         hbox.getStyleClass().clear();
         hbox.getStyleClass().add("createPokemonHBoxActive");
@@ -200,11 +188,9 @@ public class TrainerView implements InterfacePokemonView {
         controller.TrainerName.setText(trainer.trainerName);
         controller.FightNumber.setText(Integer.toString(trainer.fightNumber));
         // Fought Already
-        ObservableList<String> foughtAlready = FXCollections.observableArrayList("True", "False");
-        controller.FoughtAlready.setItems(foughtAlready);
         controller.FoughtAlready.setValue(trainer.foughtAlready ? "True" : "False");
         // Route
-        if (trainer.routeId > 0) Utilities.selectMetLocation(trainer.routeId, controller.MetLocation.getItems(), controller.Route);
+        if (trainer.routeId > 0) Utilities.selectMetLocation(trainer.routeId, controller.Route.getItems(), controller.Route);
         else controller.Route.getSelectionModel().selectFirst();
     }
 
@@ -215,10 +201,10 @@ public class TrainerView implements InterfacePokemonView {
 
         controller.TrainerSpriteContainer.getChildren().get(indexOfSprite).getStyleClass().add("createPokemonHBoxActive");
         setCssOfActiveTrainerSpriteBox((HBox) controller.TrainerSpriteContainer.getChildren().get(indexOfSprite));
-        setTrainerSprite(trainerSpritesList.get(indexOfSprite).locationOfSprite);
+        setTrainerSprite(controller.trainerSpritesList.get(indexOfSprite).locationOfSprite);
 
         previousTrainerSpriteBox = (HBox) controller.TrainerSpriteContainer.getChildren().get(indexOfSprite);
-        controller.trainerSpriteId = trainerSpritesList.get(indexOfSprite).spriteId;
+        controller.trainerSpriteId = controller.trainerSpritesList.get(indexOfSprite).spriteId;
     }
 
     private void setPokemonValues(Trainer trainer) {
@@ -283,33 +269,26 @@ public class TrainerView implements InterfacePokemonView {
     // Pokemon
     private void loadPokemons() {
         // get List with all the PokeStats
-        pokemonList = FXCollections.observableArrayList(new PokemonList(0,  "No Pokemon", 0, 0));
-        pokemonList.addAll(dbAPI.getPokemonNicknameWithPokeStatsIdFromSpecificGame(data.getGameName()));
+        controller.pokemonList = FXCollections.observableArrayList(new PokemonList(0,  "No Pokemon", 0, 0));
+        controller.pokemonList.addAll(dbAPI.getPokemonNicknameWithPokeStatsIdFromSpecificGame(data.getGameName()));
 
         // Create The Labels on the Side for loading in the data
-        for (PokemonList pokeList : pokemonList) {
+        for (PokemonList pokeList : controller.pokemonList) {
             createPokemonLabel(pokeList);
         }
     }
 
     public void createPokemonLabel(PokemonList pokemon) {
-        HBox hbox = new HBox(5);
-        // Label
-        Label smallSprite = new Label();
-        // Set small Pokemon Sprite
-        Utilities ut = new Utilities();
-        if (pokemon.pokemonStatsId > 0) ut.setSmallSpriteNextToLabel(smallSprite, dbAPI.getSpriteIdFromSpecificPokemon(pokemon.pokemonStatsId));
-        // Name
-        Label btn = new Label(pokemon.nickname);
-        // hidden pokemonId for identification
-        Label identifier = new Label(Integer.toString(pokemon.pokemonId));
-        identifier.setMaxWidth(0);
-        identifier.setVisible(false);
-        // CSS
-        hbox.getStyleClass().add("createPokemonHBox");
-        btn.getStyleClass().add("createPokemonLabel");
+        HBox hbox = pokemon.createSmallPokemonLabel();
 
         // add EventListener
+        setPokemonEventHandler(hbox, pokemon);
+
+        // add To Controller
+        controller.PokemonContainer.getChildren().add(hbox);
+    }
+
+    public void setPokemonEventHandler(HBox hbox, PokemonList pokemon) {
         hbox.addEventHandler(MouseEvent.MOUSE_CLICKED, mouseEvent -> {
             // set CSS
             setCssOfActivePokemonBox(hbox);
@@ -322,20 +301,17 @@ public class TrainerView implements InterfacePokemonView {
             // set pokemonStatsId
             controller.pokemonId = pokemon.pokemonId;
             controller.activePokemonHBox = hbox;
-            controller.activePokemonSprite = smallSprite;
-            controller.activePokemonNickname = btn;
+            controller.activePokemonSprite = pokemon.getSmallSpriteLabel(hbox);
+            controller.activePokemonNickname = pokemon.getSmallNameLabel(hbox);
         });
-
-        // add to HBox
-        hbox.getChildren().addAll(smallSprite, btn, identifier);
-        // add To Controller
-        controller.PokemonContainer.getChildren().add(hbox);
     }
 
     private void setCssOfActivePokemonBox(HBox hbox) {
         // change previousPokemonBox background-color back to original
-        previousPokemonBox.getStyleClass().clear();
-        previousPokemonBox.getStyleClass().add("createPokemonHBox");
+        if (previousPokemonBox != null) {
+            previousPokemonBox.getStyleClass().clear();
+            previousPokemonBox.getStyleClass().add("createPokemonHBox");
+        }
         // change this PokemonBox to active background-color
         hbox.getStyleClass().clear();
         hbox.getStyleClass().add("createPokemonHBoxActive");
@@ -418,7 +394,7 @@ public class TrainerView implements InterfacePokemonView {
             // select first Trainer
             controller.TrainerContainer.getChildren().get(0).getStyleClass().add("createPokemonHBoxActive");
             previousTrainerBox = (HBox) controller.TrainerContainer.getChildren().get(0);
-            controller.trainerId = trainerList.get(0).trainerId;
+            controller.trainerId = controller.trainerList.get(0).trainerId;
             // nameOfPokemon
             HBox hbox = (HBox) controller.TrainerContainer.getChildren().get(0);
             // Label
@@ -426,11 +402,10 @@ public class TrainerView implements InterfacePokemonView {
             controller.fightNumberLabel = (Label) hbox.getChildren().get(1);
             controller.trainerNameLabel = (Label) hbox.getChildren().get(2);
             // Sprite of Trainer
-            int indexOfSprite = Utilities.findTrainerSprite(trainerList.get(0), controller.TrainerSpriteContainer);
-            previousTrainerSpriteBox = (HBox) controller.TrainerSpriteContainer.getChildren().get(indexOfSprite);
+            if (previousTrainerSpriteBox != null) previousTrainerSpriteBox.getStyleClass().removeIf(style -> style.equals("createPokemonHBoxActive"));
 
             // Set first Pokemon Css that is in the first Trainer
-            ArrayList<Pokemon> trainerPokemonList = dbAPI.getAllPokemonFromTrainer(trainerList.get(0).trainerId);
+            ArrayList<Pokemon> trainerPokemonList = dbAPI.getAllPokemonFromTrainer(controller.trainerList.get(0).trainerId);
             controller.previousSelectedPokemon = controller.Pokemon1Box;
             try {
                 controller.pokemon1 = trainerPokemonList.get(0);
@@ -439,14 +414,15 @@ public class TrainerView implements InterfacePokemonView {
             }
             selectFirstPokemon();
 
-            int index = Utilities.findPokemonInPokemonList(controller.pokemon1, pokemonList);
+            // active Pokemon
+            int index = Utilities.findPokemonInPokemonList(controller.pokemon1, controller.pokemonList);
             previousPokemonBox = (HBox) controller.PokemonContainer.getChildren().get(index);
 
             // Set Options
-            setTrainerOptions(trainerList.get(0));
+            setTrainerOptions(controller.trainerList.get(0));
 
             // set the first Trainer in the list
-            setTrainerStats(trainerList.get(0));
+            setTrainerStats(controller.trainerList.get(0));
         } catch (Exception e) {
             System.out.println("There is no Trainer to select. Error: " + e);
         }

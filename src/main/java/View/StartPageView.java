@@ -12,15 +12,17 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.Random;
 
 public class StartPageView extends Application {
     private static StartPageController c;
     private static String backgroundImagePath;
     private static Label arrows;
     private static API.Database db;
-
     private static Data.dataSingleton data;
+    private static ArrayList<String> buttonColors;
 
     public static void main(String[] args) {
         launch(args);
@@ -67,10 +69,10 @@ public class StartPageView extends Application {
 
         // make Buttons depending on the games in db
         LinkedHashMap<String, String> games = db.getGameNameAndSprite();
+        // The Color what a button can have
+        buttonColors = data.generateButtonColors();
 
         if (games != null) games.forEach(this::constructButton);
-
-        // create Animation for switching images
     }
 
     public void constructButton(String name, String locationOfImage) {
@@ -83,6 +85,13 @@ public class StartPageView extends Application {
         // create button
         Label btn = new Label(name);
         btn.getStyleClass().add("startButton");
+
+        // set Background-Color
+        int indexOfColor = new Random().nextInt(buttonColors.size());
+        hContainer.setStyle(buttonColors.get(indexOfColor));
+        // remove color or generate new List if the is no color to pick anymore
+        if (buttonColors.size() > 0) buttonColors.remove(indexOfColor);
+        else buttonColors = data.generateButtonColors();
 
         // set background-image when mouse is over Container
         hContainer.addEventHandler(MouseEvent.MOUSE_ENTERED, mouseEvent -> {

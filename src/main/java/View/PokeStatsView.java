@@ -1,6 +1,7 @@
 package View;
 
 import Classes.PokeStats;
+import Classes.SearchFilter;
 import Classes.Sprite;
 import Controller.PokeStatsController;
 import Intefaces.InterfacePokeStatsView;
@@ -12,6 +13,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 public class PokeStatsView implements InterfacePokeStatsView {
@@ -27,11 +29,12 @@ public class PokeStatsView implements InterfacePokeStatsView {
             Scene scene = new Scene(fxmlFile);
             scene.getStylesheets().add(String.valueOf(getClass().getResource("/CSS/style.css")));
             stage.setTitle("Edit PokeStats");
-            stage.setScene(scene);
-            stage.show();
 
             loadDynamicContent();
             selectFirstPokeStats();
+
+            stage.setScene(scene);
+            stage.show();
         }
     }
 
@@ -53,7 +56,8 @@ public class PokeStatsView implements InterfacePokeStatsView {
             this.setPokeStats(controller.pokeStatsList.get(0), controller);
             setPokeStatsOption(controller.pokeStatsList.get(0).pokemonStatsId);
         } catch (Exception e) {
-            System.out.println(e);
+//            System.out.println(e);
+            e.printStackTrace();
         }
     }
 
@@ -88,47 +92,31 @@ public class PokeStatsView implements InterfacePokeStatsView {
 
     // --------------- Pokemon Label ---------------
     public void createPokemonLabel(PokeStats pokeStats) {
-        HBox hbox = new HBox(5);
-        hbox.setAlignment(Pos.CENTER_LEFT);
-        // Label
-        Label smallSprite = new Label();
-        Label dexNr = new Label(String.format("%03d", pokeStats.dexNr));
-        Label btn = new Label(pokeStats.nameOfPokemon);
-        // CSS
-        hbox.getStyleClass().add("createPokemonHBox");
-        // Set small Pokemon Sprite
-        Utilities ut = new Utilities();
-        if (pokeStats.pokemonStatsId > 0)
-            ut.setSmallSpriteNextToLabel(smallSprite, dbAPI.getSpriteIdFromSpecificPokemon(pokeStats.pokemonStatsId));
-        else {
-            smallSprite.getStyleClass().add("createSmallSpriteNextToLabel");
-            smallSprite.setStyle("-fx-background-image: url(/Img/Pokeballs/000.png);");
-        }
-        // dexNr and Name
-        dexNr.getStyleClass().add("createPokemonLabel");
-        btn.getStyleClass().add("createPokemonLabel");
+        HBox hbox = pokeStats.createLabel();
 
         // add EventListener
+        setPokeStatsEventHandler(hbox, pokeStats);
+
+        // add To Controller
+        controller.PokemonContainer.getChildren().add(hbox);
+    }
+
+    public void setPokeStatsEventHandler(HBox hbox, PokeStats pokeStats) {
         hbox.addEventHandler(MouseEvent.MOUSE_CLICKED, mouseEvent -> {
             // set CSS
             setCssOfActivePokeStatsBox(hbox);
             // set Values
-            this.setPokeStats(pokeStats, controller);
+            setPokeStats(pokeStats, controller);
             // set Options
             setPokeStatsOption(pokeStats.pokemonStatsId);
             // set pokemonStatsId
             controller.pokemonStatsId = pokeStats.pokemonStatsId;
-            controller.smallSpriteOfPokemon = smallSprite;
-            controller.nameOfPokemon = btn;
-            controller.dexNrOfPokemon = dexNr;
+            controller.smallSpriteOfPokemon = pokeStats.getSpriteLabel(hbox);
+            controller.nameOfPokemon = pokeStats.getNameLabel(hbox);
+            controller.dexNrOfPokemon = pokeStats.getDexNrLabel(hbox);
             controller.activePokeStatsBox = hbox;
             controller.doesSpeciesAlreadyExist();
         });
-
-        // add to HBox
-        hbox.getChildren().addAll(smallSprite, dexNr, btn);
-        // add To Controller
-        controller.PokemonContainer.getChildren().add(hbox);
     }
 
     private void setCssOfActivePokeStatsBox(HBox hbox) {
@@ -157,9 +145,8 @@ public class PokeStatsView implements InterfacePokeStatsView {
 
     // --------------- Images ---------------
     private void loadImages() {
-        try {
-            // get List with all the PokeStats
-            controller.pokeSpriteList = dbAPI.getAllPokemonSprites();
+        controller.pokeSpriteList = dbAPI.getAllPokemonSprites();
+        if (controller.pokeSpriteList.size() > 0) {
             // Create The Labels on the Side for loading in the data
             for (Sprite pokeSprite : controller.pokeSpriteList) {
                 createSpriteLabel(pokeSprite);
@@ -167,22 +154,20 @@ public class PokeStatsView implements InterfacePokeStatsView {
 
             // setSprite
             controller.previousSpriteBox = (HBox) controller.ImageContainer.getChildren().get(0);
-        } catch (Exception e) {
-            System.out.println("No Images were found.");
         }
     }
 
     private void createSpriteLabel(Sprite pokeSprite) {
-        HBox hbox = new HBox(5);
-        // Label
-        Label smallImages = new Label();
-        Label nameOfPokemon = new Label(pokeSprite.spriteName);
-        // CSS
-        hbox.getStyleClass().add("createPokemonHBox");
-        setSmallSpriteNextToLabel(smallImages, pokeSprite);
-        nameOfPokemon.getStyleClass().add("createPokemonLabel");
+        HBox hbox = pokeSprite.createLabel();
 
         // add EventListener
+        setSpriteEventHandler(hbox, pokeSprite);
+
+        // add To Controller
+        controller.ImageContainer.getChildren().add(hbox);
+    }
+
+    public void setSpriteEventHandler(HBox hbox, Sprite pokeSprite) {
         hbox.addEventHandler(MouseEvent.MOUSE_CLICKED, mouseEvent -> {
             // set CSS
             setCssOfActiveSpriteBox(hbox, controller);
@@ -191,17 +176,6 @@ public class PokeStatsView implements InterfacePokeStatsView {
             // set pokemonStatsId
             controller.spriteId = pokeSprite.spriteId;
         });
-
-        // add to HBox
-        hbox.getChildren().addAll(smallImages, nameOfPokemon);
-        // add To Controller
-        controller.ImageContainer.getChildren().add(hbox);
     }
-
-    public void setSmallSpriteNextToLabel(Label smallImages, Sprite pokeSprite) {
-        smallImages.getStyleClass().add("createSmallSpriteNextToLabel");
-        smallImages.setStyle("-fx-background-image: url(" + this.getClass().getResource(pokeSprite.locationOfSprite) + ");");
-    }
-
 
 }

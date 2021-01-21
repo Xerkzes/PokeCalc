@@ -24,9 +24,9 @@
 
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" style="-fx-background-color: rgb(50, 50, 50);" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controller.PokemonController">
    <children>
-      <VBox layoutX="11.0" layoutY="109.0" spacing="10.0" style="-fx-border-color: linear-gradient(to top right, #F56217, #0ed2f7); -fx-border-width: 1 1 0 0; -fx-border-radius: 0 10 0 0;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="70.0">
+      <VBox layoutX="11.0" layoutY="109.0" maxWidth="220.0" spacing="10.0" style="-fx-border-color: linear-gradient(to top right, #F56217, #0ed2f7); -fx-border-width: 1 1 0 0; -fx-border-radius: 0 10 0 0;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="70.0">
          <children>
-            <TextField alignment="CENTER" disable="true" onKeyReleased="#searchForPokemon" promptText="search bar" style="-fx-background-color: transperant; -fx-border-color: linear-gradient(to bottom right, #F56217, #0ed2f7); -fx-border-radius: 40; -fx-text-inner-color: white;">
+            <TextField fx:id="PokemonPokeStatsSearchField" alignment="CENTER" onKeyReleased="#searchForPokemonAndPokeStats" promptText="search bar" style="-fx-background-color: transperant; -fx-border-color: linear-gradient(to bottom right, #F56217, #0ed2f7); -fx-border-radius: 40; -fx-text-inner-color: white;">
                <opaqueInsets>
                   <Insets />
                </opaqueInsets>
@@ -38,18 +38,28 @@
               <tabs>
                 <Tab text="PokeStats">
                      <content>
-                        <ScrollPane hbarPolicy="NEVER" prefHeight="227.0" prefWidth="200.0" style="-fx-background: transparent; -fx-background-color: transparent;">
+                        <ScrollPane hbarPolicy="NEVER" style="-fx-background: transparent; -fx-background-color: transparent;">
                            <content>
-                              <VBox fx:id="PokeStatsContainer" prefHeight="252.0" prefWidth="188.0" spacing="5.0" />
+                              <AnchorPane fx:id="PokeStatsAnchor">
+                                 <children>
+                                    <VBox fx:id="PokeStatsContainer" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                                    <VBox fx:id="FilteredPokeStatsContainer" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                                 </children>
+                              </AnchorPane>
                            </content>
                         </ScrollPane>
                      </content>
                 </Tab>
                   <Tab text="Pokemon">
                      <content>
-                        <ScrollPane hbarPolicy="NEVER" prefHeight="330.0" prefWidth="204.0" style="-fx-background: transparent; -fx-background-color: transparent;">
+                        <ScrollPane hbarPolicy="NEVER" style="-fx-background: transparent; -fx-background-color: transparent;">
                            <content>
-                              <VBox fx:id="PokemonContainer" prefHeight="253.0" prefWidth="188.0" spacing="5.0" />
+                              <AnchorPane fx:id="PokemonAnchor">
+                                 <children>
+                                    <VBox fx:id="PokemonContainer" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                                    <VBox fx:id="FilteredPokemonContainer" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                                 </children>
+                              </AnchorPane>
                            </content>
                         </ScrollPane>
                      </content>

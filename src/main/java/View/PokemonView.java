@@ -31,10 +31,11 @@ public class PokemonView implements InterfacePokemonView {
             Scene scene = new Scene(fxmlFile);
             scene.getStylesheets().add(String.valueOf(getClass().getResource("/CSS/style.css")));
             stage.setTitle("Edit Pokemon");
-            stage.setScene(scene);
-            stage.show();
 
             loadDynamicContent();
+
+            stage.setScene(scene);
+            stage.show();
         }
     }
 
@@ -59,13 +60,13 @@ public class PokemonView implements InterfacePokemonView {
 
     private void createAllPokeStats() {
         // get List with all the PokeStats
-        ObservableList<PokeStats> pokeStatsList = dbAPI.getPokeStatsFromSpecificGame(data.getGameName());
+        controller.pokeStatsList = dbAPI.getPokeStatsFromSpecificGame(data.getGameName());
         // Create The Labels on the Side for loading in the data
-        for (PokeStats pokeStats : pokeStatsList) {
+        for (PokeStats pokeStats : controller.pokeStatsList) {
             createPokemonLabel(pokeStats);
         }
 
-        setTheFirstThing(pokeStatsList.get(0));
+        setTheFirstThing(controller.pokeStatsList.get(0));
     }
 
     private void createAllPokemons() {
@@ -123,23 +124,49 @@ public class PokemonView implements InterfacePokemonView {
 
     // PokeStats
     private void createPokemonLabel(PokeStats pokeStats) {
-        HBox hbox = new HBox(5);
-        hbox.setAlignment(Pos.CENTER_LEFT);
-        // Label
-        Label smallSprite = new Label();
-        // Set small Pokemon Sprite
-        Utilities ut = new Utilities();
-        ut.setSmallSpriteNextToLabel(smallSprite, dbAPI.getSpriteIdFromSpecificPokemon(pokeStats.pokemonStatsId));
-        // dexNr and Name
-        Label dexNr = new Label(String.format("%03d", pokeStats.dexNr));
-        Label btn = new Label(pokeStats.nameOfPokemon);
-        // CSS
-        hbox.getStyleClass().add("createPokemonHBox");
-        smallSprite.getStyleClass().add("createSmallSpriteNextToLabel");
-        dexNr.getStyleClass().add("createPokemonLabel");
-        btn.getStyleClass().add("createPokemonLabel");
+        HBox hbox = pokeStats.createLabel();
 
         // add EventListener
+        setPokemonLabelEventHandler(hbox, pokeStats);
+
+        // add To Controller
+        controller.PokeStatsContainer.getChildren().add(hbox);
+    }
+
+    // Pokemon
+    public void createPokemonLabel(PokemonList pokemon) {
+        HBox hbox = pokemon.createPokemonLabel();
+
+        // add EventListener
+        setPokemonLabelEventHandler(hbox, pokemon);
+
+        // add To Controller
+        controller.PokemonContainer.getChildren().add(hbox);
+    }
+
+    public void setPokemonLabelEventHandler(HBox hbox, PokemonList pokemon) {
+        // add EventListener
+        hbox.addEventHandler(MouseEvent.MOUSE_CLICKED, mouseEvent -> {
+            // set CSS
+            setCssOfActiveBox(hbox);
+            // set Values
+            setPokemonStats(pokemon, controller);
+            // set pokemonStatsId
+            controller.pokemonId = pokemon.pokemonId;
+            controller.activePokemonHBox = hbox;
+            controller.activePokemonSprite = pokemon.getSpriteLabel(hbox);
+            controller.activePokemonDexNr = pokemon.getDexNrLabel(hbox);
+            controller.activePokemonNickname = pokemon.getNameLabel(hbox);
+            // activate species
+            controller.SpeciesName.setDisable(false);
+            // options
+            controller.AddPokemonButton.setDisable(true);
+            controller.EditPokemonButton.setDisable(false);
+            controller.DeletePokemonButton.setDisable(false);
+        });
+    }
+
+    public void setPokemonLabelEventHandler(HBox hbox, PokeStats pokeStats) {
         hbox.addEventHandler(MouseEvent.MOUSE_CLICKED, mouseEvent -> {
             // set CSS
             setCssOfActiveBox(hbox);
@@ -152,53 +179,6 @@ public class PokemonView implements InterfacePokemonView {
             controller.EditPokemonButton.setDisable(true);
             controller.DeletePokemonButton.setDisable(true);
         });
-
-        // add to HBox
-        hbox.getChildren().addAll(smallSprite, dexNr, btn);
-        // add To Controller
-        controller.PokeStatsContainer.getChildren().add(hbox);
-    }
-
-    // Pokemon
-    public void createPokemonLabel(PokemonList pokemon) {
-        HBox hbox = new HBox(5);
-        // Label
-        Label smallSprite = new Label();
-        // Set small Pokemon Sprite
-        Utilities ut = new Utilities();
-        ut.setSmallSpriteNextToLabel(smallSprite, dbAPI.getSpriteIdFromSpecificPokemon(pokemon.pokemonStatsId));
-        // dexNr and Name
-        Label dexNr = new Label(String.format("%03d", pokemon.dexNr));
-        Label btn = new Label(pokemon.nickname);
-        // CSS
-        hbox.getStyleClass().add("createPokemonHBox");
-        dexNr.getStyleClass().add("createPokemonLabel");
-        btn.getStyleClass().add("createPokemonLabel");
-
-        // add EventListener
-        hbox.addEventHandler(MouseEvent.MOUSE_CLICKED, mouseEvent -> {
-            // set CSS
-            setCssOfActiveBox(hbox);
-            // set Values
-            setPokemonStats(pokemon, controller);
-            // set pokemonStatsId
-            controller.pokemonId = pokemon.pokemonId;
-            controller.activePokemonHBox = hbox;
-            controller.activePokemonSprite = smallSprite;
-            controller.activePokemonDexNr = dexNr;
-            controller.activePokemonNickname = btn;
-            // activate species
-            controller.SpeciesName.setDisable(false);
-            // options
-            controller.AddPokemonButton.setDisable(true);
-            controller.EditPokemonButton.setDisable(false);
-            controller.DeletePokemonButton.setDisable(false);
-        });
-
-        // add to HBox
-        hbox.getChildren().addAll(smallSprite, dexNr, btn);
-        // add To Controller
-        controller.PokemonContainer.getChildren().add(hbox);
     }
 
     // Css of active Box

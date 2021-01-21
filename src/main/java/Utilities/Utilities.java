@@ -1,8 +1,11 @@
 package Utilities;
 
 import Classes.*;
+import Classes.Abstract.BasicPokemon;
 import View.MenuView;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
@@ -10,6 +13,7 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
@@ -36,7 +40,7 @@ public class Utilities {
         pv.createMenuPage(data.getStage());
     }
 
-    // other
+    // -------------------------- other --------------------------
     public void setSmallSpriteNextToLabel(Label smallImages, int spriteId) {
         if (spriteId > 0) {
             API.Database dbAPI = new API.Database();
@@ -134,16 +138,17 @@ public class Utilities {
         return userPokemonAttacks;
     }
 
-    // select or set Nature / Ability / Item / Moves
+    // -------------------------- select or set Nature / Ability / Item / Moves --------------------------
     public static void selectSpecies(String nameOfPokemon, ObservableList<PokeStatsList> list, ComboBox<PokeStatsList> cb) {
         int index = 0;
+
         for (PokeStatsList item : list) {
             if (item.nameOfPokemon.equals(nameOfPokemon)) {
-                break;
+                cb.getSelectionModel().select(index);
+                return;
             }
             index++;
         }
-        cb.getSelectionModel().select(index);
     }
 
     public static void selectNature(String nature, ObservableList<Nature> natures, ComboBox<Nature> natureBox) {
@@ -242,10 +247,11 @@ public class Utilities {
     }
 
     // -------------------------- Calculation --------------------------
+    // HP
     public static int calculateHpStat(int baseHp, int ivHp, int evHp, int level) {
         return (int) Math.floor(((baseHp * 2 + ivHp + Math.floor(evHp / 4.0)) * level) / 100) + level + 10;
     }
-
+    // Att - Def- SpA - SpD- Spe
     public static int calculateStatWithBadge(Nature nature, int base, int iv, int ev, int level, String stat, Badge badge, boolean haveBadge) {
         double natureMultiplier = (nature.StatUp.equals(stat) && !nature.StatDown.equals(stat)) ? 1.1 : (nature.StatDown.equals(stat) && !nature.StatUp.equals(stat)) ? 0.9 : 1;
         double tempStat = Math.floor((Math.floor(((base * 2 + iv + Math.floor(ev / 4.0)) * level) / 100) + 5) * natureMultiplier);
@@ -258,6 +264,7 @@ public class Utilities {
         return (int) tempStat;
     }
 
+    // Damage
     public static ArrayList<Integer> calculateDamageOfAttack(String activeBattleMode, String activeWeather, boolean critical, PokemonStats attackPokemon, PokemonStats defendPokemon, Attack attack) {
         ArrayList<Integer> damageRolls = new ArrayList<Integer>();
 

@@ -2,50 +2,125 @@ package Controller;
 
 import Classes.*;
 import Classes.Abstract.AbstractPokemonController;
+import Classes.Animation.BorderShadow;
+import Classes.Animation.ShakeTransition;
 import Utilities.Utilities;
+import View.PokemonView;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
 public class PokemonController extends AbstractPokemonController {
     // static method to create instance of Singleton class
     private static PokemonController controller = null;
+
     public static PokemonController getInstance() {
         return controller;
     }
+
     @FXML
     public void initialize() {
         controller = this;
     }
 
-    // PokeStats
+    public TextField PokemonPokeStatsSearchField;
+    // Container
     public VBox PokeStatsContainer;
     public VBox PokemonContainer;
+    public VBox FilteredPokeStatsContainer;
+    public VBox FilteredPokemonContainer;
+    public AnchorPane PokeStatsAnchor;
+    public AnchorPane PokemonAnchor;
     // Options
     public Button AddPokemonButton;
     public Button EditPokemonButton;
     public Button DeletePokemonButton;
-    // own variables
+    // filter
+    public ObservableList<PokeStats> pokeStatsList;
     public ObservableList<PokemonList> pokemonList;
+    // other
     public int pokemonId;
     public HBox activePokemonHBox;
     public Label activePokemonSprite;
     public Label activePokemonDexNr;
     public Label activePokemonNickname;
 
-    public void searchForPokemon() {
-    }
-
     // -------------------------- Menu --------------------------
     public void backToMenu() {
         Utilities.backToMenu();
+    }
+
+    // -------------------------- Search --------------------------
+    public void searchForPokemonAndPokeStats(KeyEvent e) {
+        ObservableList<PokeStats> filteredPokeStatsList = FXCollections.observableArrayList();
+        ObservableList<PokemonList> filteredPokemonList = FXCollections.observableArrayList();
+        KeyCode code = e.getCode();
+
+        emptyFilterList();
+
+        // search String
+        String filter = PokemonPokeStatsSearchField.getText();
+
+        // empty String when ESC is pressed
+        if (code == KeyCode.ESCAPE) {
+            filter = "";
+            PokemonPokeStatsSearchField.setText("");
+        }
+
+        if (filter.length() == 0 || PokemonPokeStatsSearchField.getText().length() == 0) {
+            setSearchContainerVisibility(false);
+            try {
+                PokeStatsAnchor.getChildren().add(PokeStatsContainer);
+                PokemonAnchor.getChildren().add(PokemonContainer);
+            } catch (Exception ignored) {}
+        }
+        // create Filtered List
+        else {
+            setSearchContainerVisibility(true);
+            PokeStatsAnchor.getChildren().remove(PokeStatsContainer);
+            PokemonAnchor.getChildren().remove(PokemonContainer);
+
+            PokemonView pv = new PokemonView();
+            String txtUsr = filter.toLowerCase();
+
+            // PokeStats
+            pokeStatsList.stream().filter(el -> el.nameOfPokemon.toLowerCase().contains(txtUsr)).forEach(filteredPokeStatsList::add);
+            for (PokeStats pokeStats : filteredPokeStatsList) {
+                HBox hbox = pokeStats.createLabel();
+                pv.setPokemonLabelEventHandler(hbox, pokeStats);
+                FilteredPokeStatsContainer.getChildren().add(hbox);
+            }
+
+            // Pokemon
+            pokemonList.stream().filter(el -> el.nameOfPokemon().toLowerCase().contains(txtUsr)).forEach(filteredPokemonList::add);
+            for (PokemonList pokeList : filteredPokemonList) {
+                HBox hbox = pokeList.createPokemonLabel();
+                pv.setPokemonLabelEventHandler(hbox, pokeList);
+                FilteredPokemonContainer.getChildren().add(hbox);
+            }
+        }
+    }
+
+    private void emptyFilterList() {
+        FilteredPokeStatsContainer.getChildren().clear();
+        FilteredPokemonContainer.getChildren().clear();
+    }
+
+    private void setSearchContainerVisibility(boolean b) {
+        // entire List
+        PokeStatsContainer.setVisible(!b);
+        PokemonContainer.setVisible(!b);
+        // search List
+        FilteredPokeStatsContainer.setVisible(b);
+        FilteredPokemonContainer.setVisible(b);
     }
 
     // -------------------------- Options --------------------------
@@ -94,7 +169,13 @@ public class PokemonController extends AbstractPokemonController {
         }
 
         if (result > 0) {
+            BorderShadow light = new BorderShadow(AddPokemonButton);
+            light.playFromStart(); // Animation
+
             addPokemonToList(result);
+        } else {
+            ShakeTransition anim = new ShakeTransition(AddPokemonButton);
+            anim.playFromStart();
         }
     }
 
@@ -141,7 +222,13 @@ public class PokemonController extends AbstractPokemonController {
         }
 
         if (result) {
+            BorderShadow light = new BorderShadow(EditPokemonButton);
+            light.playFromStart(); // Animation
+
             updateLabel();
+        } else {
+            ShakeTransition anim = new ShakeTransition(EditPokemonButton);
+            anim.playFromStart();
         }
     }
 
@@ -156,8 +243,14 @@ public class PokemonController extends AbstractPokemonController {
         }
 
         if (result) {
+            BorderShadow light = new BorderShadow(DeletePokemonButton);
+            light.playFromStart(); // Animation
+
             removePokemonFromLists();
             selectNewFirstPokemon();
+        } else {
+            ShakeTransition anim = new ShakeTransition(DeletePokemonButton);
+            anim.playFromStart();
         }
     }
 
@@ -205,5 +298,6 @@ public class PokemonController extends AbstractPokemonController {
         }
         pokemonList.remove(index);
     }
+
 
 }

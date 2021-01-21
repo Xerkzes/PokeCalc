@@ -1,9 +1,9 @@
 package Controller;
 
+import Classes.AutoBoxComplete;
 import Classes.Sprite;
 import View.StartPageView;
 import javafx.collections.ObservableList;
-import javafx.fxml.FXML;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.ComboBox;
@@ -17,18 +17,13 @@ public class AddGameController {
     public static AddGameController getInstance() {
         return controller;
     }
-    @FXML
     public void initialize() {
         controller = this;
     }
 
-    @FXML
     public AnchorPane newGameIPreviewImage;
-    @FXML
     public TextField nameOfNewGame;
-    @FXML
     public ComboBox<Sprite> imageOfNewGame;
-    @FXML
     public ComboBox<String> templateOfNewGame;
 
     private Stage newGameStage;
@@ -51,11 +46,13 @@ public class AddGameController {
         templateOfNewGame.setItems(savedTypeSettings);
         templateOfNewGame.setValue("Default");
 
+        new AutoBoxComplete<>(imageOfNewGame);
+        new AutoBoxComplete<>(templateOfNewGame);
+
         newGameStage.setScene(new Scene(fxmlFile));
         newGameStage.show();
     }
 
-    @FXML
     public void newGameImageSelected() {
         try {
             int imageId = imageOfNewGame.getValue().spriteId;
@@ -69,7 +66,6 @@ public class AddGameController {
         } catch (Exception ignored) {}
     }
 
-    @FXML
     public void createNewGame() {
         API.Database dbApi = new API.Database();
         // create Setting

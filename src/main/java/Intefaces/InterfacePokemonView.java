@@ -8,7 +8,6 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.ComboBox;
-import javafx.scene.layout.HBox;
 
 public interface InterfacePokemonView {
     API.Database dbAPI = new API.Database();
@@ -26,7 +25,7 @@ public interface InterfacePokemonView {
         controller.Nature.setItems(natures);
         // Held Item
         ObservableList<Item> itemList = FXCollections.observableArrayList();
-        itemList.add(new Item(-1, -1, null, null, 0, 0, 0));
+        itemList.add(new Item(-1, -1, "", "", 0, 0, 0));
         itemList.addAll(dbAPI.getAllItemsFromGame(gameName));
         controller.HeldItem.setItems(itemList);
         // Ability
@@ -42,10 +41,27 @@ public interface InterfacePokemonView {
         ObservableList<Attack> attackList = FXCollections.observableArrayList();
         attackList.add(new Attack(-1, null, "", null, 0,0,null,null,0,null,null,false,false,false,false,false,false));
         attackList.addAll(dbAPI.getAllAttacksFromGame(gameName));
-        controller.Attack1Move.setItems(attackList);
-        controller.Attack2Move.setItems(attackList);
-        controller.Attack3Move.setItems(attackList);
-        controller.Attack4Move.setItems(attackList);
+        controller.Attack1Move.setItems(FXCollections.observableArrayList(attackList));
+        controller.Attack2Move.setItems(FXCollections.observableArrayList(attackList));
+        controller.Attack3Move.setItems(FXCollections.observableArrayList(attackList));
+        controller.Attack4Move.setItems(FXCollections.observableArrayList(attackList));
+
+        // search filter
+        setSearchFilterOnComboBox(controller);
+    }
+
+    default void setSearchFilterOnComboBox(AbstractPokemonController controller) {
+        new AutoBoxComplete<>(controller.SpeciesName);
+        new AutoBoxComplete<>(controller.Gender);
+        new AutoBoxComplete<>(controller.Nature);
+        new AutoBoxComplete<>(controller.HeldItem);
+        new AutoBoxComplete<>(controller.Ability);
+        new AutoBoxComplete<>(controller.MetLocation);
+        new AutoBoxComplete<>(controller.PokeBall);
+        new AutoBoxComplete<>(controller.Attack1Move);
+        new AutoBoxComplete<>(controller.Attack2Move);
+        new AutoBoxComplete<>(controller.Attack3Move);
+        new AutoBoxComplete<>(controller.Attack4Move);
     }
 
     // PokeStats
@@ -130,24 +146,32 @@ public interface InterfacePokemonView {
     }
 
     default void setMainStats(Pokemon pokemon, PokeStats pokeStats, AbstractPokemonController controller) {
-        EventHandler<ActionEvent> speciesHandler = controller.Nature.getOnAction();
+        // removes EventHandler otherwise it will trigger and tries to calculate stuff
+        // while the rest of the data is not set and will result to an error
+        EventHandler<ActionEvent> speciesHandler = controller.SpeciesName.getOnAction();
+        EventHandler<ActionEvent> natureHandler = controller.Nature.getOnAction();
+        controller.SpeciesName.setOnAction(null);
         controller.Nature.setOnAction(null);
 
+        // select stats
         Utilities.selectSpecies(pokeStats.nameOfPokemon, controller.SpeciesName.getItems(), controller.SpeciesName);
         controller.Nickname.setText(pokemon.nickname);
-        controller.Gender.setValue(pokemon.gender);
+        if (!pokemon.gender.equals("")) controller.Gender.setValue(pokemon.gender); else controller.Gender.getSelectionModel().selectFirst();
         controller.Level.setText(Integer.toString(pokemon.level));
         Utilities.selectNature(pokemon.natureName, controller.Nature.getItems(), controller.Nature);
         Utilities.selectHeldItem(pokemon.itemId, controller.HeldItem.getItems(), controller.HeldItem);
-        Utilities.selectAbility(pokemon.abilityId, controller.Ability.getItems(), controller.Ability);
+        if (pokemon.abilityId > 0) Utilities.selectAbility(pokemon.abilityId, controller.Ability.getItems(), controller.Ability); else controller.Ability.getSelectionModel().selectFirst();
         controller.Friendship.setText(Integer.toString(pokemon.friendship));
 
-        controller.Nature.setOnAction(speciesHandler);
+        // add the EventHandler back
+        controller.SpeciesName.setOnAction(speciesHandler);
+        controller.Nature.setOnAction(natureHandler);
     }
 
     default void setMetStats(Pokemon pokemon, AbstractPokemonController controller) {
-        Utilities.selectMetLocation(pokemon.metLocation, controller.MetLocation.getItems(), controller.MetLocation);
-        Utilities.selectPokeball(pokemon.pokeball, controller.PokeBall.getItems(), controller.PokeBall);
+        if (pokemon.metLocation > 0) Utilities.selectMetLocation(pokemon.metLocation, controller.MetLocation.getItems(), controller.MetLocation); else controller.MetLocation.getSelectionModel().selectFirst();
+        if (pokemon.pokeball > 0) Utilities.selectPokeball(pokemon.pokeball, controller.PokeBall.getItems(), controller.PokeBall);
+        else Utilities.selectPokeball("Poke Ball", controller.PokeBall.getItems(), controller.PokeBall);
     }
 
     default void setStatsStats(Pokemon pokemon, PokeStats pokeStats, AbstractPokemonController controller) {

@@ -22,6 +22,11 @@
     -fx-padding: 5px 0;
 }
 
+.startButton.label .text {
+    -fx-font-size: 18px;
+    -fx-text-fill: rgb(255, 255, 255);
+}
+
 .startArrows {
     -fx-font-size: 25px;
 }
@@ -179,9 +184,3 @@
 .MenuButtons:hover {
     -fx-background-color: linear-gradient(to right, #74ebd5, #acb6e5);
 }
-
-linear-gradient(to bottom, #F56217 1px, transparent 20px, transparent 99%, #0ed2f7 99%) no repeat,
-linear-gradient(to left, #F56217 1px, transparent 20px, transparent 99%, #0ed2f7 99%) no repeat;
-
-linear-gradient(to bottom, #000 1px, transparent 1px, transparent 99.9%, black 99.9%) no-repeat,
-linear-gradient(to left, #000 1px, transparent 1px, transparent 99.9%, black 99.9%) no-repeat;

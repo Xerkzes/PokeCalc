@@ -3,18 +3,18 @@ package Controller;
 import API.Database;
 import Classes.*;
 import Classes.Abstract.AbstractPokemonController;
+import Classes.Animation.BorderShadow;
+import Classes.Animation.ShakeTransition;
 import Data.dataSingleton;
 import Utilities.Utilities;
-import javafx.animation.FadeTransition;
+import View.PokeStatsView;
+import View.UserPokemonView;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
-import javafx.fxml.FXML;
 import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
@@ -37,6 +37,13 @@ public class UserPokemonController extends AbstractPokemonController {
     public Button EditPokemonButton;
     public Button RemoveFromUserButton;
     public Button DeletePokemonButton;
+    // Search
+    public AnchorPane PokemonAnchor;
+    public AnchorPane UserPokemonAnchor;
+    public TextField PokemonSearchField;
+    public VBox FilteredPokemonContainer;
+    public TextField UserPokemonSearchField;
+    public VBox FilteredUserPokemonContainer;
     // own variables
     public int pokemonId;
     public int pokemonStatsId;
@@ -45,10 +52,67 @@ public class UserPokemonController extends AbstractPokemonController {
     public Label activePokemonDexNr;
     public Label activePokemonNickname;
     public ObservableList<PokemonList> pokeStatsList;
-    public ArrayList<PokemonList> userPokemonList;
+    public ObservableList<PokemonList> userPokemonList;
     // -------------------------- Menu --------------------------
     public void backToMenu() {
         Utilities.backToMenu();
+    }
+
+    // ---------------- Search ----------------
+    public void searchForPokemon(KeyEvent e) {
+        SearchFilter<PokemonList> filter = new SearchFilter<>();
+        ObservableList<PokemonList> list = filter.searchFor(e, FilteredPokemonContainer, PokemonSearchField, pokeStatsList);
+
+        if (list != null) {
+            setPokemonContainerVisibility(true);
+            PokemonAnchor.getChildren().remove(PokemonContainer);
+            UserPokemonView upv = new UserPokemonView();
+            for (PokemonList pl : list) {
+                HBox hbox = pl.createPokemonLabel();
+                upv.setPokemonEventHandler(hbox, pl);
+                FilteredPokemonContainer.getChildren().add(hbox);
+            }
+        } else {
+            try {
+                PokemonAnchor.getChildren().add(PokemonContainer);
+            } catch (Exception ignored) {}
+            setPokemonContainerVisibility(false);
+        }
+    }
+
+    public void searchForUserPokemons(KeyEvent e) {
+        SearchFilter<PokemonList> filter = new SearchFilter<>();
+        ObservableList<PokemonList> list = filter.searchFor(e, FilteredUserPokemonContainer, UserPokemonSearchField, userPokemonList);
+
+        if (list != null) {
+            setUserPokemonContainerVisibility(true);
+            UserPokemonAnchor.getChildren().remove(UserPokemonContainer);
+            UserPokemonView upv = new UserPokemonView();
+            for (PokemonList pl : list) {
+                HBox hbox = pl.createPokemonLabel();
+                upv.setUserPokemonEventHandler(hbox, pl);
+                FilteredUserPokemonContainer.getChildren().add(hbox);
+            }
+        } else {
+            try {
+                UserPokemonAnchor.getChildren().add(UserPokemonContainer);
+            } catch (Exception ignored) {}
+            setUserPokemonContainerVisibility(false);
+        }
+    }
+
+    private void setPokemonContainerVisibility(boolean b) {
+        // entire List
+        PokemonContainer.setVisible(!b);
+        // search List
+        FilteredPokemonContainer.setVisible(b);
+    }
+
+    private void setUserPokemonContainerVisibility(boolean b) {
+        // entire List
+        UserPokemonContainer.setVisible(!b);
+        // search List
+        FilteredUserPokemonContainer.setVisible(b);
     }
 
     // -------------------------- Options --------------------------
@@ -96,10 +160,16 @@ public class UserPokemonController extends AbstractPokemonController {
         }
 
         if (result > 0) {
+            BorderShadow light = new BorderShadow(CreatePokemonButton);
+            light.playFromStart(); // Animation
+
             int trainerId = dbAPI.getUserIdFromSpecificGame(data.getGameName());
             dbAPI.addPokemonToUser(data.getGameName(), trainerId, result, userPokemonList.size()+1);
 
             addPokemonToUserList(result, SpeciesName.getValue().pokemonStatsId);
+        } else {
+            ShakeTransition shake = new ShakeTransition(CreatePokemonButton);
+            shake.playFromStart();
         }
     }
 
@@ -108,15 +178,20 @@ public class UserPokemonController extends AbstractPokemonController {
             Database dbAPI = new Database();
             dataSingleton data = dataSingleton.getInstance();
 
-            boolean result = false;
             int trainerId = dbAPI.getUserIdFromSpecificGame(data.getGameName());
 
-            result = dbAPI.addPokemonToUser(data.getGameName(), trainerId, pokemonId, userPokemonList.size()+1);
+            boolean result = dbAPI.addPokemonToUser(data.getGameName(), trainerId, pokemonId, userPokemonList.size()+1);
 
             if (result) {
+                BorderShadow light = new BorderShadow(AddToUserButton);
+                light.playFromStart(); // Animation
+
                 addPokemonToUserList(pokemonId, pokemonStatsId);
                 removePokemonFromPokeList();
                 selectNewFirstPokemon();
+            } else {
+                ShakeTransition anim = new ShakeTransition(AddToUserButton);
+                anim.playFromStart();
             }
         }
     }
@@ -164,7 +239,13 @@ public class UserPokemonController extends AbstractPokemonController {
         }
 
         if (result) {
+            BorderShadow light = new BorderShadow(EditPokemonButton);
+            light.playFromStart(); // Animation
+
             updateLabel();
+        } else {
+            ShakeTransition anim = new ShakeTransition(EditPokemonButton);
+            anim.playFromStart();
         }
     }
 
@@ -183,9 +264,15 @@ public class UserPokemonController extends AbstractPokemonController {
             }
 
             if (result) {
+                BorderShadow light = new BorderShadow(RemoveFromUserButton);
+                light.playFromStart(); // Animation
+
                 removePokemonFromLists();
                 addPokemonToPokemonList();
                 selectNewFirstPokemon();
+            } else {
+                ShakeTransition anim = new ShakeTransition(RemoveFromUserButton);
+                anim.playFromStart();
             }
         }
     }
@@ -201,8 +288,14 @@ public class UserPokemonController extends AbstractPokemonController {
         }
 
         if (result) {
+            BorderShadow light = new BorderShadow(DeletePokemonButton);
+            light.playFromStart(); // Animation
+
             removePokemonFromPokeList();
             selectNewFirstPokemon();
+        } else {
+            ShakeTransition anim = new ShakeTransition(DeletePokemonButton);
+            anim.playFromStart();
         }
     }
 

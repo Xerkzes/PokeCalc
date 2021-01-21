@@ -1,20 +1,21 @@
 package Controller;
 
 import Classes.Abstract.AbstractPokeStatsController;
+import Classes.Animation.BorderShadow;
+import Classes.Animation.ShakeTransition;
 import Classes.PokeStats;
+import Classes.SearchFilter;
 import Classes.Sprite;
 import Utilities.Utilities;
-import javafx.animation.FadeTransition;
+import View.PokeStatsView;
 import javafx.collections.ObservableList;
-import javafx.fxml.FXML;
 import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-
-import java.util.ArrayList;
 
 public class PokeStatsController extends AbstractPokeStatsController {
     // static method to create instance of Singleton class
@@ -26,39 +27,154 @@ public class PokeStatsController extends AbstractPokeStatsController {
         controller = this;
     }
 
+    public TextField PokeStatsSearchField;
+    public TextField SpriteSearchField;
     public VBox PokemonContainer;
+    public VBox FilteredPokeStatsContainer;
+    public VBox FilteredSpriteList;
+    public AnchorPane PokemonAnchor;
+    public AnchorPane SpriteAnchor;
+    // Options
     public Button CreatePokeStatsButton;
     public Button EditPokeStatsButton;
     public Button DeletePokeStatsButton;
-    // Variables
+    // others
     public HBox previousPokeStatsBox;
     public HBox activePokeStatsBox;
     public int pokemonStatsId;
     public Label smallSpriteOfPokemon;
     public Label dexNrOfPokemon;
 
-
     public void backToMenu() {
         Utilities.backToMenu();
     }
 
     // --------------- Search ---------------
-    public void searchForPokeStats() {
+    public void searchForPokeStats(KeyEvent e) {
+        SearchFilter<PokeStats> filter = new SearchFilter<>();
+        ObservableList<PokeStats> list = filter.searchFor(e, FilteredPokeStatsContainer, PokeStatsSearchField, pokeStatsList);
+
+        if (list != null) {
+            setPokeStatsContainerVisibility(true);
+            PokemonAnchor.getChildren().remove(PokemonContainer);
+            PokeStatsView pv = new PokeStatsView();
+            for (PokeStats pokeStats : list) {
+                HBox hbox = pokeStats.createLabel();
+                pv.setPokeStatsEventHandler(hbox, pokeStats);
+                FilteredPokeStatsContainer.getChildren().add(hbox);
+            }
+        } else {
+            try {
+                PokemonAnchor.getChildren().add(PokemonContainer);
+            } catch (Exception ignored) {}
+            setPokeStatsContainerVisibility(false);
+        }
     }
 
-    public void searchForSprite() {
+    public void searchForSprite(KeyEvent e) {
+        SearchFilter<Sprite> filter = new SearchFilter<>();
+        ObservableList<Sprite> list = filter.searchFor(e, FilteredSpriteList, SpriteSearchField, pokeSpriteList);
+
+        if (list != null) {
+            setSpriteContainerVisibility(true);
+            SpriteAnchor.getChildren().remove(ImageContainer);
+            PokeStatsView pv = new PokeStatsView();
+            for (Sprite sprite : list) {
+                HBox hbox = sprite.createLabel();
+                pv.setSpriteEventHandler(hbox, sprite);
+                FilteredSpriteList.getChildren().add(hbox);
+            }
+        } else {
+            try {
+                SpriteAnchor.getChildren().add(ImageContainer);
+            } catch (Exception ignored) { }
+            setSpriteContainerVisibility(false);
+        }
+    }
+
+    private void setPokeStatsContainerVisibility(boolean b) {
+        // entire List
+        PokemonContainer.setVisible(!b);
+        // search List
+        FilteredPokeStatsContainer.setVisible(b);
+    }
+
+    private void setSpriteContainerVisibility(boolean b) {
+        // entire List
+        ImageContainer.setVisible(!b);
+        // search List
+        FilteredSpriteList.setVisible(b);
     }
 
     // --------------- Options ---------------
     public void createPokeStats() {
+        int pokeStatsId = 0;
+        String nameOfPokemon = "";
+        int dexNr = 0;
+        String expGrowthRate = "";
+        double height = 0;
+        double weight = 0;
+        int baseHp = 0;
+        int baseAttack = 0;
+        int baseDefense = 0;
+        int baseSpecialAttack = 0;
+        int baseSpecialDefense = 0;
+        int baseSpeed = 0;
+
         try {
             if (Species.getText().length() > 0) {
                 // get Values
-                String nameOfPokemon = Species.getText();
+                nameOfPokemon = Species.getText();
+                dexNr = Integer.parseInt(DexNr.getText());
+                expGrowthRate = ExpGrowthRate.getValue();
+                height = Double.parseDouble(Height.getText());
+                weight = Double.parseDouble(Weight.getText());
+                baseHp = Integer.parseInt(BaseHp.getText());
+                baseAttack = Integer.parseInt(BaseAttack.getText());
+                baseDefense = Integer.parseInt(BaseDefense.getText());
+                baseSpecialAttack = Integer.parseInt(BaseSpecialAttack.getText());
+                baseSpecialDefense = Integer.parseInt(BaseSpecialDefense.getText());
+                baseSpeed = Integer.parseInt(BaseSpeed.getText());
+                String type1 = PokemonType1.getValue();
+                String type2 = PokemonType2.getValue();
+
+                API.Database dbAPI = new API.Database();
+                Data.dataSingleton data = Data.dataSingleton.getInstance();
+
+                //  check if Species already in PokeStats
+                if (!Utilities.findPokeStatsInList(nameOfPokemon, pokeStatsList))
+                    pokeStatsId = dbAPI.addPokeStatsToGame(data.getGameName(), nameOfPokemon, dexNr, expGrowthRate, height,
+                            weight, baseHp, baseAttack, baseDefense, baseSpecialAttack, baseSpecialDefense, baseSpeed, spriteId, type1, type2);
+            }
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+
+        // create Species
+        if (pokeStatsId > 0) {
+            BorderShadow light = new BorderShadow(CreatePokeStatsButton);
+            light.playFromStart(); // Animation
+
+            addPokeStatsToList(pokeStatsId, nameOfPokemon, dexNr, expGrowthRate, height, weight, baseHp, baseAttack, baseDefense, baseSpecialAttack, baseSpecialDefense, baseSpeed);
+            doesSpeciesAlreadyExist();
+        } else {
+            ShakeTransition anim = new ShakeTransition(CreatePokeStatsButton);
+            anim.playFromStart();
+        }
+    }
+
+    public void editPokeStats() {
+        boolean result = false;
+
+        if (doesSpeciesAlreadyExist()) {
+            try {
+                API.Database dbAPI = new API.Database();
+
+                String species = Species.getText();
                 int dexNr = Integer.parseInt(DexNr.getText());
-                String expGrowthRate = ExpGrowthRate.getValue();
                 double height = Double.parseDouble(Height.getText());
                 double weight = Double.parseDouble(Weight.getText());
+                String expGrowthRate = ExpGrowthRate.getValue();
                 int baseHp = Integer.parseInt(BaseHp.getText());
                 int baseAttack = Integer.parseInt(BaseAttack.getText());
                 int baseDefense = Integer.parseInt(BaseDefense.getText());
@@ -68,59 +184,22 @@ public class PokeStatsController extends AbstractPokeStatsController {
                 String type1 = PokemonType1.getValue();
                 String type2 = PokemonType2.getValue();
 
-                API.Database dbAPI = new API.Database();
-                Data.dataSingleton data = Data.dataSingleton.getInstance();
-
-                //  check if Species already in PokeStats
-                boolean noError = Utilities.findPokeStatsInList(nameOfPokemon, pokeStatsList);
-
-                // create Species
-                if (!noError) {
-                    int pokeStatsId = dbAPI.addPokeStatsToGame(data.getGameName(), nameOfPokemon, dexNr, expGrowthRate, height,
-                            weight, baseHp, baseAttack, baseDefense, baseSpecialAttack, baseSpecialDefense, baseSpeed, spriteId, type1, type2);
-                    if (pokeStatsId > 0) {
-                        addPokeStatsToList(pokeStatsId, nameOfPokemon, dexNr, expGrowthRate, height, weight, baseHp, baseAttack, baseDefense, baseSpecialAttack, baseSpecialDefense, baseSpeed);
-                        doesSpeciesAlreadyExist();
-                    }
-                }
+                result = dbAPI.updatePokeStats(pokemonStatsId, species, dexNr, expGrowthRate, height, weight,
+                        baseHp, baseAttack, baseDefense, baseSpecialAttack, baseSpecialDefense, baseSpeed, spriteId, type1, type2);
+            } catch (Exception e) {
+                System.out.println(e);
             }
-        } catch (Exception e) {
-            System.out.println(e);
-        }
-    }
-
-    public void editPokeStats() {
-        boolean result = false;
-
-        try {
-            API.Database dbAPI = new API.Database();
-
-            String species = Species.getText();
-            int dexNr = Integer.parseInt(DexNr.getText());
-            double height = Double.parseDouble(Height.getText());
-            double weight = Double.parseDouble(Weight.getText());
-            String expGrowthRate = ExpGrowthRate.getValue();
-            int baseHp = Integer.parseInt(BaseHp.getText());
-            int baseAttack = Integer.parseInt(BaseAttack.getText());
-            int baseDefense = Integer.parseInt(BaseDefense.getText());
-            int baseSpecialAttack = Integer.parseInt(BaseSpecialAttack.getText());
-            int baseSpecialDefense = Integer.parseInt(BaseSpecialDefense.getText());
-            int baseSpeed = Integer.parseInt(BaseSpeed.getText());
-            String type1 = PokemonType1.getValue();
-            String type2 = PokemonType2.getValue();
-
-            //  check if Species already in PokeStats
-            boolean noError = doesSpeciesAlreadyExist();
-
-            if (!noError) result = dbAPI.updatePokeStats(pokemonStatsId, species, dexNr, expGrowthRate, height, weight,
-                    baseHp, baseAttack, baseDefense, baseSpecialAttack, baseSpecialDefense, baseSpeed, spriteId, type1, type2);
-        } catch (Exception e) {
-            System.out.println(e);
         }
 
         if (result) {
+            BorderShadow light = new BorderShadow(EditPokeStatsButton);
+            light.playFromStart(); // Animation
+
             setPokeStatsAndImage();
             doesSpeciesAlreadyExist();
+        } else {
+            ShakeTransition anim = new ShakeTransition(EditPokeStatsButton);
+            anim.playFromStart();
         }
     }
 
@@ -130,14 +209,32 @@ public class PokeStatsController extends AbstractPokeStatsController {
             boolean result = dbAPI.deletePokeStats(pokemonStatsId);
 
             if (result) {
+                BorderShadow light = new BorderShadow(DeletePokeStatsButton);
+                light.playFromStart(); // Animation
+
                 removePokemonFromLists();
                 selectNewFirstPokeStats();
+            } else {
+                ShakeTransition anim = new ShakeTransition(DeletePokeStatsButton);
+                anim.playFromStart();
             }
         }
     }
 
     // Add PokeStats
-    private void addPokeStatsToList(int pokeStatsId, String nameOfPokemon, int dexNr, String expGrowthRate, double height, double weight, int baseHp, int baseAttack, int baseDefense, int baseSpecialAttack, int baseSpecialDefense, int baseSpeed) {
+    private void addPokeStatsToList(
+            int pokeStatsId,
+            String nameOfPokemon,
+            int dexNr,
+            String expGrowthRate,
+            double height,
+            double weight,
+            int baseHp,
+            int baseAttack,
+            int baseDefense,
+            int baseSpecialAttack,
+            int baseSpecialDefense,
+            int baseSpeed) {
         nameOfPokemon = nameOfPokemon.substring(0, 1).toUpperCase() + nameOfPokemon.substring(1);
         PokeStats newPokeStat = new PokeStats(pokeStatsId, nameOfPokemon, dexNr, expGrowthRate, height, weight, baseHp, baseAttack, baseDefense, baseSpecialAttack, baseSpecialDefense, baseSpeed);
 

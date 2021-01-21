@@ -1,20 +1,24 @@
 package Controller;
 
 import Classes.*;
+import Classes.Animation.BorderShadow;
+import Classes.Animation.ShakeTransition;
+import Data.dataSingleton;
 import Utilities.Utilities;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.geometry.HPos;
 import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.FlowPane;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
 
 import java.util.ArrayList;
 
@@ -53,8 +57,8 @@ public class CalculatorController {
     public Label userPokemon4;
     public Label userPokemon5;
     public Label userPokemon6;
-    public VBox UserVBoxBox;
-    public VBox UserVBoxPokemon;
+    public ScrollPane UserBoxBox;
+    public ScrollPane UserBoxPokemon;
     public FlowPane UserPokemons;
     // Base
     public TextField UserPokemonNickname;
@@ -211,9 +215,9 @@ public class CalculatorController {
     public Label foePokemon4;
     public Label foePokemon5;
     public Label foePokemon6;
-    public VBox TrainerVBox;
-    public FlowPane Trainers;
-    public VBox TrainerVBoxPokemon;
+    public ScrollPane TrainerBox;
+    public VBox Trainers;
+    public ScrollPane TrainerBoxPokemon;
     // Base
     public TextField FoePokemonNickname;
     public ComboBox<PokeStatsList> FoePokemonSpecies;
@@ -352,7 +356,7 @@ public class CalculatorController {
     public boolean foeFriendGuard;
     public boolean foeBattery;
     // --------------------- My Variables ---------------------
-    Pokemon tempPokemon = new Pokemon(0,0,0,0,"Bashful",0,0,"No Pokemon", "",0,0,"None",0,false,0,0,0, 0, 0,0,0,0,0,0,0,0);
+    Pokemon tempPokemon = Data.dataSingleton.tempPokemon;
     // User
     public int activeUserPokemonIndex;
     public Label activePokemonImageInSelection;
@@ -373,7 +377,7 @@ public class CalculatorController {
     public Label pokemon6ImageBox;
     // Trainer
     public ObservableList<Trainer> trainerList;
-    public VBox activeTrainerBox;
+    public TitledPane activeTrainerTitlePane;
     public int activeTrainerId;
     public int trainerIndex;
     public int activeTrainerPokemonIndex;
@@ -411,10 +415,10 @@ public class CalculatorController {
     }
 
     private void showRightWindowsWhenCalculatorIsOpened() {
-        UserVBoxBox.setVisible(true);
-        UserVBoxPokemon.setVisible(false);
-        TrainerVBox.setVisible(true);
-        TrainerVBoxPokemon.setVisible(false);
+        UserBoxBox.setVisible(true);
+        UserBoxPokemon.setVisible(false);
+        TrainerBox.setVisible(true);
+        TrainerBoxPokemon.setVisible(false);
     }
 
     // -------------------------------------------- Events --------------------------------------------
@@ -489,13 +493,13 @@ public class CalculatorController {
     }
 
     public void getUserBox() {
-        UserVBoxBox.setVisible(true);
-        UserVBoxPokemon.setVisible(false);
+        UserBoxBox.setVisible(true);
+        UserBoxPokemon.setVisible(false);
     }
 
     public void getUserPokemonStats() {
-        UserVBoxBox.setVisible(false);
-        UserVBoxPokemon.setVisible(true);
+        UserBoxBox.setVisible(false);
+        UserBoxPokemon.setVisible(true);
     }
 
     public void clickedNoUserPokemon() {
@@ -859,11 +863,17 @@ public class CalculatorController {
         }
 
         if (result > 0) {
+            BorderShadow light = new BorderShadow(AddUserPokemonButton);
+            light.playFromStart(); // Animation
+
             int trainerId = dbAPI.getUserIdFromSpecificGame(data.getGameName());
             dbAPI.addPokemonToUser(data.getGameName(), trainerId, result, userPokemonList.size()+1);
 
             addPokemonToList(pokemon);
             updatePokemonInSelection(pokemon);
+        } else {
+            ShakeTransition anim = new ShakeTransition(AddUserPokemonButton);
+            anim.playFromStart();
         }
     }
 
@@ -909,7 +919,13 @@ public class CalculatorController {
         }
 
         if (result) {
+            BorderShadow light = new BorderShadow(EditUserPokemonButton);
+            light.playFromStart(); // Animation
+
             updateLabel();
+        } else {
+            ShakeTransition anim = new ShakeTransition(EditUserPokemonButton);
+            anim.playFromStart();
         }
     }
 
@@ -924,11 +940,17 @@ public class CalculatorController {
         }
 
         if (result) {
+            BorderShadow light = new BorderShadow(DeleteUserPokemonButton);
+            light.playFromStart(); // Animation
+
             // deletes Pokemon, only works if no trainer has the pokemon in his party
             dbAPI.deletePokemon(activeUserPokemon.pokemonId);
 
             removePokemonFromBox();
             selectNoPokemon();
+        } else {
+            ShakeTransition anim = new ShakeTransition(DeleteUserPokemonButton);
+            anim.playFromStart();
         }
     }
 
@@ -1537,13 +1559,13 @@ public class CalculatorController {
     }
 
     public void getTrainers() {
-        TrainerVBox.setVisible(true);
-        TrainerVBoxPokemon.setVisible(false);
+        TrainerBox.setVisible(true);
+        TrainerBoxPokemon.setVisible(false);
     }
 
     public void getFoePokemonStats() {
-        TrainerVBox.setVisible(false);
-        TrainerVBoxPokemon.setVisible(true);
+        TrainerBox.setVisible(false);
+        TrainerBoxPokemon.setVisible(true);
     }
 
     public void previousTrainer() {
@@ -1924,12 +1946,18 @@ public class CalculatorController {
         }
 
         if (result > 0) {
+            BorderShadow light = new BorderShadow(AddFoePokemonButton);
+            light.playFromStart(); // Animation
+
             updateTrainerPokemonInSelection(pokemon);
             // Trainer
             dbAPI.updateTrainerPokemon(activeTrainerId, trainerPokemon1.pokemonId, trainerPokemon2.pokemonId,
                     trainerPokemon3.pokemonId, trainerPokemon4.pokemonId, trainerPokemon5.pokemonId, trainerPokemon6.pokemonId);
-            // update Trainer Tooltip
-            updateTrainerTooltip();
+
+            updateTitleImg();
+        } else {
+            ShakeTransition anim = new ShakeTransition(AddFoePokemonButton);
+            anim.playFromStart();
         }
     }
 
@@ -1974,8 +2002,14 @@ public class CalculatorController {
         }
 
         if (result) {
+            BorderShadow light = new BorderShadow(EditFoePokemonButton);
+            light.playFromStart(); // Animation
+
             updateTrainerPokemonLabel();
-            updateTrainerTooltip();
+//            updateTrainerTooltip();
+        } else {
+            ShakeTransition anim = new ShakeTransition(EditFoePokemonButton);
+            anim.playFromStart();
         }
     }
 
@@ -1989,18 +2023,18 @@ public class CalculatorController {
         }
 
         if (result) {
+            BorderShadow light = new BorderShadow(DeleteFoePokemonButton);
+            light.playFromStart(); // Animation
+
             // deletes Pokemon, only works if no trainer has the pokemon in his party
             dbAPI.deletePokemon(activeTrainerPokemon.pokemonId);
 
             clickedNoFoePokemon();
-            updateTrainerTooltip();
+            updateTitleImg();
+        }  else {
+            ShakeTransition anim = new ShakeTransition(DeleteFoePokemonButton);
+            anim.playFromStart();
         }
-    }
-
-    private void updateTrainerTooltip() {
-        Trainer trainer = dbAPI.getTrainerFromTrainerId(activeTrainerId);
-        Tooltip tooltip = createTooltipForTrainer(trainer);
-        Tooltip.install(activeTrainerBox, tooltip);
     }
 
     // add Pokemon
@@ -2028,6 +2062,11 @@ public class CalculatorController {
     private void updateTrainerPokemonLabel() {
         // in Selection
         updatePokemonSprite(activeTrainerPokemonBox, FoePokemonSpecies.getValue().pokemonStatsId);
+    }
+
+    private void updateTitleImg() {
+        Trainer trainer = dbAPI.getTrainerFromTrainerId(activeTrainerId);
+        activeTrainerTitlePane.setGraphic(CreateTrainerTitledPane.createTitle(trainer));
     }
 
     // -------------------------------------------- Own Functions --------------------------------------------
@@ -2286,7 +2325,7 @@ public class CalculatorController {
         UserPokemonLevel.setText(Integer.toString(pokemon.level));
         UserPokemonFriendship.setText(Integer.toString(pokemon.friendship));
         // Stats
-        if (pokeStats == null) pokeStats = new PokeStats(0,"",0,"Slow",0,0,0,0,0,0,0,0);
+        if (pokeStats == null) pokeStats = dataSingleton.pokeStats;
         setUserBaseIvEvStats(pokemon, pokeStats);
         // Nature / Ability / Item / Status
         Utilities.selectNature(pokemon.natureName, UserPokemonNature.getItems(), UserPokemonNature);
@@ -2842,7 +2881,7 @@ public class CalculatorController {
         FoePokemonLevel.setText(Integer.toString(pokemon.level));
         FoePokemonFriendship.setText(Integer.toString(pokemon.friendship));
         // Stats
-        if (pokeStats == null) pokeStats = new PokeStats(0,"",0,"Slow",0,0,0,0,0,0,0,0);
+        if (pokeStats == null) pokeStats = dataSingleton.pokeStats;
         setFoeBaseIvEvStats(pokemon, pokeStats);
         // Nature / Ability / Item / Status
         Utilities.selectNature(pokemon.natureName, FoePokemonNature.getItems(), FoePokemonNature);
@@ -3149,20 +3188,20 @@ public class CalculatorController {
             setBadgeSprites();
             // Species
             ObservableList<PokeStatsList> speciesList = dbAPI.getPokeStatsListFromSpecificGame(data.getGameName());
-            UserPokemonSpecies.setItems(speciesList);
-            FoePokemonSpecies.setItems(speciesList);
+            UserPokemonSpecies.setItems(FXCollections.observableArrayList(speciesList));
+            FoePokemonSpecies.setItems(FXCollections.observableArrayList(speciesList));
             // Types
             ObservableList<String> types = FXCollections.observableArrayList();
             types.add("");
             types.addAll(dbAPI.getAllTypeFromSpecificGame(data.getGameName()));
-            UserPokemonType1.setItems(types);
-            UserPokemonType2.setItems(types);
-            FoePokemonType1.setItems(types);
-            FoePokemonType2.setItems(types);
+            UserPokemonType1.setItems(FXCollections.observableArrayList(types));
+            UserPokemonType2.setItems(FXCollections.observableArrayList(types));
+            FoePokemonType1.setItems(FXCollections.observableArrayList(types));
+            FoePokemonType2.setItems(FXCollections.observableArrayList(types));
             // Gender
             ObservableList<String> genders = FXCollections.observableArrayList("Male", "Female", "None");
-            UserPokemonGender.setItems(genders);
-            FoePokemonGender.setItems(genders);
+            UserPokemonGender.setItems(FXCollections.observableArrayList(genders));
+            FoePokemonGender.setItems(FXCollections.observableArrayList(genders));
             // Boosts
             ObservableList<String> boosts = FXCollections.observableArrayList("+6", "+5", "+4", "+3", "+2", "+1", "--", "-1", "-2", "-3", "-4", "-5", "-6");
             UserPokemonAttackBoost.setItems(boosts);
@@ -3177,45 +3216,89 @@ public class CalculatorController {
             FoePokemonSpeedBoost.setItems(boosts);
             // Nature
             ObservableList<Nature> natureList = dbAPI.getAllNature();
-            UserPokemonNature.setItems(natureList);
-            FoePokemonNature.setItems(natureList);
+            UserPokemonNature.setItems(FXCollections.observableArrayList(natureList));
+            FoePokemonNature.setItems(FXCollections.observableArrayList(natureList));
             // Abilities
             ObservableList<Ability> abilityList = dbAPI.getAllAbilitiesFromGame(data.getGameName());
-            UserPokemonAbility.setItems(abilityList);
-            FoePokemonAbility.setItems(abilityList);
+            UserPokemonAbility.setItems(FXCollections.observableArrayList(abilityList));
+            FoePokemonAbility.setItems(FXCollections.observableArrayList(abilityList));
             // Item
             ObservableList<Item> itemList = FXCollections.observableArrayList();
             itemList.add(new Item(-1, -1, "", "", 0, 0, 0));
             itemList.addAll(dbAPI.getAllItemsFromGame(data.getGameName()));
-            UserPokemonItem.setItems(itemList);
-            FoePokemonItem.setItems(itemList);
+            UserPokemonItem.setItems(FXCollections.observableArrayList(itemList));
+            FoePokemonItem.setItems(FXCollections.observableArrayList(itemList));
             // Status
             ObservableList<String> status = FXCollections.observableArrayList("Healthy", "Poisoned", "Badly Poisoned", "Burned", "Paralyzed", "Asleep", "Frozen");
-            UserPokemonStatus.setItems(status);
-            FoePokemonStatus.setItems(status);
+            UserPokemonStatus.setItems(FXCollections.observableArrayList(status));
+            FoePokemonStatus.setItems(FXCollections.observableArrayList(status));
             // MetLocation
             ObservableList<Route> metLocations = dbAPI.getALLMetLocationsFromGame(data.getGameName());
-            UserPokemonMetLocation.setItems(metLocations);
-            FoePokemonMetLocation.setItems(metLocations);
+            UserPokemonMetLocation.setItems(FXCollections.observableArrayList(metLocations));
+            FoePokemonMetLocation.setItems(FXCollections.observableArrayList(metLocations));
             // Pokeball
             ObservableList<Sprite> pokeballs = dbAPI.getAllPokeballs();
-            UserPokemonPokeball.setItems(pokeballs);
-            FoePokemonPokeball.setItems(pokeballs);
+            UserPokemonPokeball.setItems(FXCollections.observableArrayList(pokeballs));
+            FoePokemonPokeball.setItems(FXCollections.observableArrayList(pokeballs));
             // Attacks
             ObservableList<Attack> attackList = FXCollections.observableArrayList();
             attackList.add(new Attack(-1, "", "", "", 0, 0, "", "", 0, "", "", false, false, false, false, false, false));
             attackList.addAll(dbAPI.getAllAttacksFromGame(data.getGameName()));
-            setGlobalPokemonAttack(UserPokemonAttack1, UserPokemonAttack1Type, UserPokemonAttack1Category, attackList, types);
-            setGlobalPokemonAttack(UserPokemonAttack2, UserPokemonAttack2Type, UserPokemonAttack2Category, attackList, types);
-            setGlobalPokemonAttack(UserPokemonAttack3, UserPokemonAttack3Type, UserPokemonAttack3Category, attackList, types);
-            setGlobalPokemonAttack(UserPokemonAttack4, UserPokemonAttack4Type, UserPokemonAttack4Category, attackList, types);
-            setGlobalPokemonAttack(FoePokemonAttack1, FoePokemonAttack1Type, FoePokemonAttack1Category, attackList, types);
-            setGlobalPokemonAttack(FoePokemonAttack2, FoePokemonAttack2Type, FoePokemonAttack2Category, attackList, types);
-            setGlobalPokemonAttack(FoePokemonAttack3, FoePokemonAttack3Type, FoePokemonAttack3Category, attackList, types);
-            setGlobalPokemonAttack(FoePokemonAttack4, FoePokemonAttack4Type, FoePokemonAttack4Category, attackList, types);
+            setGlobalPokemonAttack(UserPokemonAttack1, UserPokemonAttack1Type, UserPokemonAttack1Category, FXCollections.observableArrayList(attackList), FXCollections.observableArrayList(types));
+            setGlobalPokemonAttack(UserPokemonAttack2, UserPokemonAttack2Type, UserPokemonAttack2Category, FXCollections.observableArrayList(attackList), FXCollections.observableArrayList(types));
+            setGlobalPokemonAttack(UserPokemonAttack3, UserPokemonAttack3Type, UserPokemonAttack3Category, FXCollections.observableArrayList(attackList), FXCollections.observableArrayList(types));
+            setGlobalPokemonAttack(UserPokemonAttack4, UserPokemonAttack4Type, UserPokemonAttack4Category, FXCollections.observableArrayList(attackList), FXCollections.observableArrayList(types));
+            setGlobalPokemonAttack(FoePokemonAttack1, FoePokemonAttack1Type, FoePokemonAttack1Category, FXCollections.observableArrayList(attackList), FXCollections.observableArrayList(types));
+            setGlobalPokemonAttack(FoePokemonAttack2, FoePokemonAttack2Type, FoePokemonAttack2Category, FXCollections.observableArrayList(attackList), FXCollections.observableArrayList(types));
+            setGlobalPokemonAttack(FoePokemonAttack3, FoePokemonAttack3Type, FoePokemonAttack3Category, FXCollections.observableArrayList(attackList), FXCollections.observableArrayList(types));
+            setGlobalPokemonAttack(FoePokemonAttack4, FoePokemonAttack4Type, FoePokemonAttack4Category, FXCollections.observableArrayList(attackList), FXCollections.observableArrayList(types));
+
+            // search filter
+            setSearchFilterOnComboBox();
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    private void setSearchFilterOnComboBox() {
+        // User
+        new AutoBoxComplete<>(UserPokemonSpecies);
+        new AutoBoxComplete<>(UserPokemonType1);
+        new AutoBoxComplete<>(UserPokemonType2);
+        new AutoBoxComplete<>(UserPokemonSpecies);
+        new AutoBoxComplete<>(UserPokemonGender);
+        new AutoBoxComplete<>(UserPokemonNature);
+        new AutoBoxComplete<>(UserPokemonAbility);
+        new AutoBoxComplete<>(UserPokemonItem);
+        new AutoBoxComplete<>(UserPokemonMetLocation);
+        new AutoBoxComplete<>(UserPokemonPokeball);
+        new AutoBoxComplete<>(UserPokemonAttack1);
+        new AutoBoxComplete<>(UserPokemonAttack1Type);
+        new AutoBoxComplete<>(UserPokemonAttack2);
+        new AutoBoxComplete<>(UserPokemonAttack2Type);
+        new AutoBoxComplete<>(UserPokemonAttack3);
+        new AutoBoxComplete<>(UserPokemonAttack3Type);
+        new AutoBoxComplete<>(UserPokemonAttack4);
+        new AutoBoxComplete<>(UserPokemonAttack4Type);
+        // Trainer
+        new AutoBoxComplete<>(FoePokemonSpecies);
+        new AutoBoxComplete<>(FoePokemonType1);
+        new AutoBoxComplete<>(FoePokemonType2);
+        new AutoBoxComplete<>(FoePokemonSpecies);
+        new AutoBoxComplete<>(FoePokemonGender);
+        new AutoBoxComplete<>(FoePokemonNature);
+        new AutoBoxComplete<>(FoePokemonAbility);
+        new AutoBoxComplete<>(FoePokemonItem);
+        new AutoBoxComplete<>(FoePokemonMetLocation);
+        new AutoBoxComplete<>(FoePokemonPokeball);
+        new AutoBoxComplete<>(FoePokemonAttack1);
+        new AutoBoxComplete<>(FoePokemonAttack1Type);
+        new AutoBoxComplete<>(FoePokemonAttack2);
+        new AutoBoxComplete<>(FoePokemonAttack2Type);
+        new AutoBoxComplete<>(FoePokemonAttack3);
+        new AutoBoxComplete<>(FoePokemonAttack3Type);
+        new AutoBoxComplete<>(FoePokemonAttack4);
+        new AutoBoxComplete<>(FoePokemonAttack4Type);
     }
 
     private Badge findBadgeViaStatBoost(ArrayList<Badge> badgeList, String stat) {
@@ -3417,67 +3500,108 @@ public class CalculatorController {
     }
 
     public void createTrainerImage(Trainer trainer, int index) {
-        int spriteId = dbAPI.getSpriteIdFromSpecificTrainer(trainer.trainerId);
-        String spritePath = dbAPI.getImagePathFromSpriteID(spriteId);
+        TitledPane tp = CreateTrainerTitledPane.createTitledPane(trainer);
+
+        // EventHandler when clicked should load the content inside of the box
+        tp.expandedProperty().addListener((observable, oldValue, newValue) -> {
+            // load content if it is expanded
+            if (newValue) loadTrainerContent(tp, trainer, index);
+        });
+
+        Trainers.getChildren().add(tp);
+    }
+
+    private void loadTrainerContent(TitledPane tp, Trainer trainer, int index) {
+        // Trainer Sprite Path
         int spriteIdTrainer = dbAPI.getSpriteIdFromSpecificTrainer(trainer.trainerId);
-        // Sprite
         String spritePathTrainer = dbAPI.getImagePathFromSpriteID(spriteIdTrainer);
         if (spritePathTrainer == null) spritePathTrainer = "/Img/Trainers/Brendan_Small_E.png";
         String finalSpritePathTrainer = spritePathTrainer;
+        // Trainer Pokemon
+        ArrayList<Pokemon> pokemonList = dbAPI.getAllPokemonFromTrainer(trainer.trainerId);
 
-        VBox trainerBox = new VBox(2);
-        trainerBox.setAlignment(Pos.CENTER);
-        trainerBox.getStyleClass().add("calcTrainerBorder");
+        // Container
+        VBox container = new VBox(10);
+        container.setAlignment(Pos.TOP_CENTER);
+        container.setStyle("-fx-background-color: linear-gradient(to bottom, derive(-fx-color,-02%), derive(-fx-color,65%) 12%,      derive(-fx-color,23%) 88%, derive(-fx-color,50%) 99%, -fx-box-border);");
         // Trainer Image
-        Label trainerImage = new Label();
-        int size = 20;
-        trainerImage.setPrefWidth(size);
-        trainerImage.setPrefHeight(size);
-        trainerImage.getStyleClass().add("calcTrainerImage");
-        trainerImage.setStyle("-fx-background-image: url(" + spritePath + ");");
-        // FightNumber
-        Label trainerFightNumber = new Label(Integer.toString(trainer.fightNumber));
+        int trainerSize = 40;
+        ImageView trainerImg = new ImageView(new Image(finalSpritePathTrainer));
+        trainerImg.setFitHeight(trainerSize); trainerImg.setFitWidth(trainerSize);
+        // Trainer Pokemons -> Grid
+        GridPane pokemonGrid = new GridPane();
+        pokemonGrid.setAlignment(Pos.CENTER);
+//        gridpane.add(new Button(), 1, 0); // column=1 row=0
+        if (pokemonList != null) {
+            for (int i = 0; i < pokemonList.size(); i++) {
+                Pokemon pokemon = pokemonList.get(i);
+                int pokemonImageSize = 25;
+                int heldItemSize = 10;
+                // width of column
+                ColumnConstraints col = new ColumnConstraints(100);
+                col.setPrefWidth(100);
+                col.setMaxWidth(120);
+                col.setHgrow(Priority.SOMETIMES);
+                pokemonGrid.getColumnConstraints().add(col);
+                // Image
+                int pokemonSpriteId = dbAPI.getSpriteIdFromSpecificPokemon(pokemon.pokemonStatsId);
+                String pokemonSpritePath = dbAPI.getImagePathFromSpriteID(pokemonSpriteId);
+                // Held-Item
+                Item item;
+                if (pokemon.itemId > 0) item = dbAPI.getItemFromItemId(pokemon.itemId);
+                else item = new Item(-1, -1, "", "", 0, 0, 0);
+                String itemSpritePath = null;
+                if (item.spriteId > 0) itemSpritePath = dbAPI.getImagePathFromSpriteID(item.spriteId);
 
-        // Tooltip when hover over Trainer
-        Tooltip tooltip = createTooltipForTrainer(trainer);
-        Tooltip.install(trainerBox, tooltip);
+                // make Nodes
+                ImageView pokemonImg = new ImageView(new Image(pokemonSpritePath));
+                pokemonImg.setFitHeight(pokemonImageSize); pokemonImg.setFitWidth(pokemonImageSize);
+                Label pokemonLevel = new Label(Integer.toString(pokemon.level));
+                // Item Node
+                Label heldItem = new Label(item.nameOfItem);
+                 if (itemSpritePath != null) {
+                     ImageView heldItemImg = new ImageView(new Image(itemSpritePath));
+                     heldItemImg.setFitHeight(heldItemSize); heldItemImg.setFitWidth(heldItemSize);
+                     heldItem.setGraphic(heldItemImg);
+                 }
+                // add Nodes to grid
+                pokemonGrid.add(pokemonImg, i ,0);
+                pokemonGrid.add(pokemonLevel, i ,1);
+                pokemonGrid.add(heldItem, i ,2);
+                GridPane.setHalignment(pokemonImg, HPos.CENTER);
+                GridPane.setHalignment(pokemonLevel, HPos.CENTER);
+                GridPane.setHalignment(heldItem, HPos.CENTER);
 
-        // add EventListener
-        trainerBox.addEventHandler(MouseEvent.MOUSE_CLICKED, mouseEvent -> {
+                // set font color to black
+                pokemonLevel.setTextFill(Color.color(0, 0, 0));
+                heldItem.setTextFill(Color.color(0, 0, 0));
+                pokemonLevel.setTextFill(Color.color(0, 0, 0));
+
+                // Attacks
+                ObservableList<PokemonAttack> attacks = dbAPI.getAttacksFromASpecificPokemon(pokemon.pokemonId);
+                for (int j = 0; j < attacks.size(); j++) {
+                    Attack attack = dbAPI.getAttackFromAttackId(attacks.get(j).attackId);
+                    Label attackLabel = new Label(attack.attackName);
+                    pokemonGrid.add(attackLabel, i ,3+j);
+                    GridPane.setHalignment(attackLabel, HPos.CENTER);
+                    attackLabel.setTextFill(Color.color(0, 0, 0));
+                }
+            }
+        }
+
+        // load Trainer when Image is clicked
+        trainerImg.addEventHandler(MouseEvent.MOUSE_CLICKED, mouseEvent -> {
             trainerIndex = index; // which trainer is on the line
             activeTrainerId = trainer.trainerId;
-            activeTrainerBox = trainerBox;
+            activeTrainerTitlePane = tp;
             selectFirstTrainerPokemon(trainer);
             // set Pokemon in the selected User Pokemon
             FoeTrainerSprite.setImage(new Image(finalSpritePathTrainer)); // set Trainer Sprite
             setPokemonToTrainer(dbAPI.getAllPokemonFromTrainer(trainer.trainerId));
         });
 
-        // add To Controller
-        trainerBox.getChildren().addAll(trainerImage, trainerFightNumber);
-        Trainers.getChildren().add(trainerBox);
-    }
-
-    private Tooltip createTooltipForTrainer(Trainer trainer) {
-        try {
-            ArrayList<Pokemon> pokemonList = dbAPI.getAllPokemonFromTrainer(trainer.trainerId);
-            Route route = dbAPI.getRouteFromRouteId(trainer.routeId);
-
-            String pokemonString = "";
-            for (Pokemon pokemon : pokemonList) {
-                PokeStats poke = dbAPI.getPokeStatsFromPokemonStatsId(pokemon.pokemonStatsId);
-                pokemonString += "Pokemon: " + poke.nameOfPokemon + "\n";
-            }
-
-            String tooltip = "Trainer: " + trainer.trainerName + "\n" +
-                    "Route: " + route.routeName + "\n" +
-                    pokemonString;
-
-            return new Tooltip(tooltip);
-        } catch (Exception e) {
-            System.out.println("Couldn't make tooltip for pokemon: " + trainer.trainerId + ". Error: " + e);
-            return new Tooltip("");
-        }
+        container.getChildren().addAll(trainerImg, pokemonGrid);
+        tp.setContent(container);
     }
 
     private void setPokemonToTrainer(ArrayList<Pokemon> pokemonList) {
@@ -3561,12 +3685,11 @@ public class CalculatorController {
         foePokemon1.getStyleClass().add("pokeballActiveBox");
     }
 
-    // Select Trainer
     private void selectTrainer(int index) {
         try {
             Trainer trainer = trainerList.get(index);
             activeTrainerId = trainer.trainerId;
-            activeTrainerBox = (VBox) Trainers.getChildren().get(index);
+            activeTrainerTitlePane = (TitledPane) Trainers.getChildren().get(index);
             ArrayList<Pokemon> pokemonList = dbAPI.getAllPokemonFromTrainer(trainer.trainerId);
             // Set Trainer Image
             int spriteIdTrainer = dbAPI.getSpriteIdFromSpecificTrainer(trainer.trainerId);
@@ -3633,7 +3756,7 @@ public class CalculatorController {
         }
     }
 
-    // todo -> not all abilities are included
+    // todo -> not all abilities are included or attacks like explosion
     // Damage Calculation
     private void calculateDamage() {
         if (activeUserPokemon.pokemonStatsId > 0 && activeTrainerPokemon.pokemonStatsId > 0) {

@@ -8,12 +8,8 @@ public class Main {
     }
 }
 
-// Pokemon and PokeStats doesn't allow you to delete if Trainer or User has it in it's party
+// have things load in the background
+// todo -> multithreading
 
-// StartPage
-// todo -> create Animation for switching images
-// todo -> have different colors for buttons
-// todo -> remove imageComboBox and use something else in addGame
-
-// todo -> show the user if the add/edit/delete was successful or not
-// todo -> search function
+// add Game
+// todo -> make template work

@@ -1,6 +1,7 @@
 package Intefaces;
 
 import Classes.Abstract.AbstractPokeStatsController;
+import Classes.AutoBoxComplete;
 import Classes.PokeStats;
 import Utilities.Utilities;
 import javafx.collections.FXCollections;
@@ -14,6 +15,7 @@ public interface InterfacePokeStatsView {
     default void setExpGrowthRate(AbstractPokeStatsController controller) {
         ObservableList<String> expGrowthRate = FXCollections.observableArrayList("Erratic", "Fast", "Medium Fast", "Medium Slow", "Slow", "Fluctuating");
         controller.ExpGrowthRate.setItems(expGrowthRate);
+        new AutoBoxComplete<>(controller.ExpGrowthRate);
     }
 
     default void loadTypes(AbstractPokeStatsController controller) {
@@ -24,11 +26,14 @@ public interface InterfacePokeStatsView {
         types.add("");
         types.addAll(dbAPI.getAllTypeFromSpecificGame(data.getGameName()));
         // set Type
-        controller.PokemonType1.setItems(types);
-        controller.PokemonType2.setItems(types);
+        controller.PokemonType1.setItems(FXCollections.observableArrayList(types));
+        controller.PokemonType2.setItems(FXCollections.observableArrayList(types));
         // select the first thing
         controller.PokemonType1.getSelectionModel().selectFirst();
         controller.PokemonType2.getSelectionModel().selectFirst();
+        // search filter
+        new AutoBoxComplete<>(controller.PokemonType1);
+        new AutoBoxComplete<>(controller.PokemonType2);
     }
 
     // --------------- Images ---------------

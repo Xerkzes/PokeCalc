@@ -24,9 +24,9 @@
 
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="700.0" style="-fx-background-color: rgb(50, 50, 50);" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controller.TrainerController">
    <children>
-      <VBox layoutX="11.0" layoutY="109.0" spacing="10.0" style="-fx-border-color: linear-gradient(to top right, #F56217, #0ed2f7); -fx-border-width: 1 1 0 0; -fx-border-radius: 0 10 0 0;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="50.0">
+      <VBox layoutX="11.0" layoutY="109.0" maxWidth="210.0" prefWidth="210.0" spacing="10.0" style="-fx-border-color: linear-gradient(to top right, #F56217, #0ed2f7); -fx-border-width: 1 1 0 0; -fx-border-radius: 0 10 0 0;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="50.0">
          <children>
-            <TextField alignment="CENTER" disable="true" onKeyReleased="#searchForTrainer" promptText="search bar" style="-fx-background-color: transperant; -fx-border-color: linear-gradient(to bottom right, #F56217, #0ed2f7); -fx-border-radius: 40; -fx-text-inner-color: white;">
+            <TextField fx:id="TrainerSearchField" alignment="CENTER" onKeyReleased="#searchForTrainer" promptText="search bar" style="-fx-background-color: transperant; -fx-border-color: linear-gradient(to bottom right, #F56217, #0ed2f7); -fx-border-radius: 40; -fx-text-inner-color: white;">
                <opaqueInsets>
                   <Insets />
                </opaqueInsets>
@@ -34,10 +34,18 @@
                   <Insets left="10.0" right="10.0" top="10.0" />
                </VBox.margin>
             </TextField>
-            <ScrollPane hbarPolicy="NEVER" prefHeight="403.0" prefWidth="204.0" style="-fx-background: transparent; -fx-background-color: transparent;" translateX="1.0" translateY="-1.0">
+            <ScrollPane hbarPolicy="NEVER" style="-fx-background: transparent; -fx-background-color: transparent;" translateX="1.0" translateY="-1.0">
                <content>
-                  <VBox fx:id="TrainerContainer" prefHeight="400.0" prefWidth="188.0" spacing="5.0" />
+                  <AnchorPane fx:id="TrainerAnchor">
+                     <children>
+                        <VBox fx:id="TrainerContainer" spacing="5.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                        <VBox fx:id="FilteredTrainerContainer" spacing="5.0" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                     </children>
+                  </AnchorPane>
                </content>
+               <VBox.margin>
+                  <Insets />
+               </VBox.margin>
             </ScrollPane>
          </children>
          <padding>
@@ -140,12 +148,36 @@
               <content>
                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                      <children>
-                        <ScrollPane layoutX="175.0" layoutY="7.0" prefHeight="301.0" prefWidth="176.0" style="-fx-background-color: linear-gradient(to bottom, #F56217, #0ed2f7); -fx-background: rgb(50, 50, 50); -fx-background-radius: 40;" AnchorPane.bottomAnchor="1.0" AnchorPane.rightAnchor="1.0" AnchorPane.topAnchor="1.0">
-                           <content>
-                              <VBox fx:id="TrainerSpriteContainer" prefHeight="292.0" prefWidth="158.0" />
-                           </content>
-                        </ScrollPane>
-                        <Label fx:id="TrainerSpriteBackground" layoutX="52.0" layoutY="32.0" styleClass="createPokeStatsImageBackground" stylesheets="@../CSS/style.css" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="200.0" AnchorPane.topAnchor="10.0" />
+                        <HBox alignment="CENTER" layoutX="220.0" layoutY="5.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="5.0">
+                           <children>
+                              <Label fx:id="TrainerSpriteBackground" prefHeight="50.0" prefWidth="50.0" styleClass="createPokeStatsImageBackground" stylesheets="@../CSS/style.css" />
+                           </children>
+                        </HBox>
+                        <VBox layoutX="312.0" layoutY="1.0" spacing="5.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="50.0">
+                           <children>
+                              <TextField fx:id="SpriteSearchField" alignment="CENTER" onKeyReleased="#searchForSprite" promptText="search bar" style="-fx-background-color: transperant; -fx-border-color: linear-gradient(to bottom right, #F56217, #0ed2f7); -fx-border-radius: 40; -fx-text-inner-color: white;">
+                                 <opaqueInsets>
+                                    <Insets />
+                                 </opaqueInsets>
+                                 <VBox.margin>
+                                    <Insets left="10.0" right="10.0" top="10.0" />
+                                 </VBox.margin>
+                              </TextField>
+                              <ScrollPane hbarPolicy="NEVER" style="-fx-background-color: transparent; -fx-background: transparent;">
+                                 <content>
+                                    <AnchorPane fx:id="SpriteAnchor">
+                                       <children>
+                                          <VBox fx:id="TrainerSpriteContainer" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                                          <VBox fx:id="FilteredTrainerSpriteContainer" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                                       </children>
+                                    </AnchorPane>
+                                 </content>
+                                 <VBox.margin>
+                                    <Insets />
+                                 </VBox.margin>
+                              </ScrollPane>
+                           </children>
+                        </VBox>
                      </children>
                   </AnchorPane>
               </content>
@@ -290,7 +322,7 @@
                               </HBox>
                               <AnchorPane layoutY="87.0" prefHeight="214.0" prefWidth="389.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="87.0">
                                  <children>
-                                    <TabPane prefHeight="254.0" prefWidth="221.0" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="168.0" AnchorPane.topAnchor="0.0">
+                                    <TabPane prefWidth="320.0" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0">
                                         <tabs>
                                             <Tab text="StartProgramm">
                                                 <content>
@@ -639,9 +671,9 @@
                                             </Tab>
                                         </tabs>
                                     </TabPane>
-                                    <VBox layoutX="21.0" layoutY="119.0" prefWidth="162.0" spacing="10.0" style="-fx-border-color: linear-gradient(to top left, #F56217, #0ed2f7); -fx-border-width: 1 0 0 1; -fx-border-radius: 10 0 0 0;" AnchorPane.bottomAnchor="1.0" AnchorPane.rightAnchor="1.0" AnchorPane.topAnchor="1.0">
+                                    <VBox layoutX="21.0" layoutY="119.0" maxWidth="162.0" prefWidth="162.0" spacing="10.0" style="-fx-border-color: linear-gradient(to top left, #F56217, #0ed2f7); -fx-border-width: 1 0 0 1; -fx-border-radius: 10 0 0 0;" AnchorPane.bottomAnchor="1.0" AnchorPane.leftAnchor="326.0" AnchorPane.rightAnchor="1.0" AnchorPane.topAnchor="1.0">
                                        <children>
-                                          <TextField alignment="CENTER" disable="true" onKeyReleased="#searchForPokemon" promptText="search bar" style="-fx-background-color: transperant; -fx-border-color: linear-gradient(to bottom right, #F56217, #0ed2f7); -fx-border-radius: 40; -fx-text-inner-color: white;">
+                                          <TextField fx:id="PokemonSearchField" alignment="CENTER" onKeyReleased="#searchForPokemon" promptText="search bar" style="-fx-background-color: transperant; -fx-border-color: linear-gradient(to bottom right, #F56217, #0ed2f7); -fx-border-radius: 40; -fx-text-inner-color: white;">
                                              <opaqueInsets>
                                                 <Insets />
                                              </opaqueInsets>
@@ -649,9 +681,14 @@
                                                 <Insets left="10.0" right="10.0" top="10.0" />
                                              </VBox.margin>
                                           </TextField>
-                                          <ScrollPane hbarPolicy="NEVER" prefHeight="403.0" prefWidth="204.0" style="-fx-background: transparent; -fx-background-color: transparent;" translateX="1.0" translateY="-1.0">
+                                          <ScrollPane hbarPolicy="NEVER" style="-fx-background: transparent; -fx-background-color: transparent;" translateX="1.0" translateY="-1.0">
                                              <content>
-                                                <VBox fx:id="PokemonContainer" prefHeight="280.0" prefWidth="144.0" spacing="5.0" />
+                                                <AnchorPane fx:id="PokemonAnchor">
+                                                   <children>
+                                                      <VBox fx:id="PokemonContainer" spacing="5.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                                                      <VBox fx:id="FilteredPokemonContainer" spacing="5.0" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                                                   </children>
+                                                </AnchorPane>
                                              </content>
                                           </ScrollPane>
                                        </children>

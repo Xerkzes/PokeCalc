@@ -2,8 +2,12 @@ package Controller;
 
 import Classes.*;
 import Classes.Abstract.AbstractPokemonController;
+import Classes.Animation.BorderShadow;
+import Classes.Animation.ShakeTransition;
 import Utilities.Utilities;
+import View.PokeStatsView;
 import View.TrainerView;
+import javafx.collections.ObservableList;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
@@ -11,6 +15,8 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
@@ -27,6 +33,15 @@ public class TrainerController extends AbstractPokemonController {
 
     // Stats
     public VBox TrainerContainer;
+    public AnchorPane TrainerAnchor;
+    public AnchorPane SpriteAnchor;
+    public AnchorPane PokemonAnchor;
+    public VBox FilteredTrainerContainer;
+    public VBox FilteredTrainerSpriteContainer;
+    public VBox FilteredPokemonContainer;
+    public TextField TrainerSearchField;
+    public TextField SpriteSearchField;
+    public TextField PokemonSearchField;
     // Main
     public TextField TrainerName;
     public TextField FightNumber;
@@ -89,6 +104,10 @@ public class TrainerController extends AbstractPokemonController {
     public Pokemon pokemon4;
     public Pokemon pokemon5;
     public Pokemon pokemon6;
+    // Lists
+    public ObservableList<Sprite> trainerSpritesList;
+    public ObservableList<Trainer> trainerList;
+    public ObservableList<PokemonList> pokemonList;
 
 
     // ---------------- Back To Menu ----------------
@@ -96,12 +115,91 @@ public class TrainerController extends AbstractPokemonController {
         Utilities.backToMenu();
     }
 
-    // ---------------- Search Pokemon ----------------
-    public void searchForPokemon() {
+    // ---------------- Search ----------------
+    public void searchForTrainer(KeyEvent e) {
+        SearchFilter<Trainer> filter = new SearchFilter<>();
+        ObservableList<Trainer> list = filter.searchFor(e, FilteredTrainerContainer, TrainerSearchField, trainerList);
+
+        if (list != null) {
+            setTrainerContainerVisibility(true);
+            TrainerAnchor.getChildren().remove(TrainerContainer);
+            TrainerView tv = new TrainerView();
+            for (Trainer trainer : list) {
+                HBox hbox = trainer.createLabel();
+                tv.setTrainerEventHandler(hbox, trainer);
+                FilteredTrainerContainer.getChildren().add(hbox);
+            }
+        } else {
+            try {
+                TrainerAnchor.getChildren().add(TrainerContainer);
+            } catch (Exception ignored) {}
+            setTrainerContainerVisibility(false);
+        }
     }
 
-    public void searchForTrainer() {
+    public void searchForSprite(KeyEvent e) {
+        SearchFilter<Sprite> filter = new SearchFilter<>();
+        ObservableList<Sprite> list = filter.searchFor(e, FilteredTrainerSpriteContainer, SpriteSearchField, trainerSpritesList);
+
+        if (list != null) {
+            setTrainerSpriteContainerVisibility(true);
+            SpriteAnchor.getChildren().remove(TrainerSpriteContainer);
+            TrainerView tv = new TrainerView();
+            for (Sprite sprite : list) {
+                HBox hbox = sprite.createLabel();
+                tv.setTrainerSpriteEventHandler(hbox, sprite);
+                FilteredTrainerSpriteContainer.getChildren().add(hbox);
+            }
+        } else {
+            try {
+                SpriteAnchor.getChildren().add(TrainerSpriteContainer);
+            } catch (Exception ignored) {}
+            setTrainerSpriteContainerVisibility(false);
+        }
     }
+
+    public void searchForPokemon(KeyEvent e) {
+        SearchFilter<PokemonList> filter = new SearchFilter<>();
+        ObservableList<PokemonList> list = filter.searchFor(e, FilteredPokemonContainer, PokemonSearchField, pokemonList);
+
+        if (list != null) {
+            setPokemonContainerVisibility(true);
+            PokemonAnchor.getChildren().remove(PokemonContainer);
+            TrainerView tv = new TrainerView();
+            for (PokemonList pk : list) {
+                HBox hbox = pk.createSmallPokemonLabel();
+                tv.setPokemonEventHandler(hbox, pk);
+                FilteredPokemonContainer.getChildren().add(hbox);
+            }
+        } else {
+            try {
+                PokemonAnchor.getChildren().add(PokemonContainer);
+            } catch (Exception ignored) {}
+            setPokemonContainerVisibility(false);
+        }
+    }
+
+    private void setTrainerContainerVisibility(boolean b) {
+        // entire List
+        TrainerContainer.setVisible(!b);
+        // search List
+        FilteredTrainerContainer.setVisible(b);
+    }
+
+    private void setTrainerSpriteContainerVisibility(boolean b) {
+        // entire List
+        TrainerSpriteContainer.setVisible(!b);
+        // search List
+        FilteredTrainerSpriteContainer.setVisible(b);
+    }
+
+    private void setPokemonContainerVisibility(boolean b) {
+        // entire List
+        PokemonContainer.setVisible(!b);
+        // search List
+        FilteredPokemonContainer.setVisible(b);
+    }
+
     // ---------------- Pokemon----------------
     public void loadPokemon1() {
         whichPokemonIsOnTheLine = 1;
@@ -180,9 +278,9 @@ public class TrainerController extends AbstractPokemonController {
     private void updatePokemonStats(Pokemon pokemon) {
         View.TrainerView tv = new View.TrainerView();
         if (pokemon != null) {
-            int index = Utilities.findPokemonInPokemonList(pokemon, View.TrainerView.pokemonList);
-            tv.setPokemonStats(View.TrainerView.pokemonList.get(index), controller);
-        } else tv.setPokemonStats(View.TrainerView.pokemonList.get(0), controller);
+            int index = Utilities.findPokemonInPokemonList(pokemon, pokemonList);
+            tv.setPokemonStats(pokemonList.get(index), controller);
+        } else tv.setPokemonStats(pokemonList.get(0), controller);
     }
 
     public void selectPokemonOnTheMenu(Pokemon pokemon) {
@@ -259,6 +357,9 @@ public class TrainerController extends AbstractPokemonController {
                 Pokemon pokemon = dbAPI.getPokemonFromPokemonId(result);
                 selectPokemonOnTheMenu(pokemon);
                 tv.setPokemonOptions(pokemon);
+            } else {
+                ShakeTransition anim = new ShakeTransition(AddPokemonButton);
+                anim.playFromStart();
             }
         }
     }
@@ -308,6 +409,9 @@ public class TrainerController extends AbstractPokemonController {
 
             if (result) {
                 updateLabel();
+            } else {
+                ShakeTransition anim = new ShakeTransition(EditPokemonButton);
+                anim.playFromStart();
             }
         }
     }
@@ -325,6 +429,9 @@ public class TrainerController extends AbstractPokemonController {
         if (result) {
             removePokemonFromLists();
             selectNewFirstPokemon();
+        } else {
+            ShakeTransition anim = new ShakeTransition(DeletePokemonButton);
+            anim.playFromStart();
         }
     }
 
@@ -333,8 +440,8 @@ public class TrainerController extends AbstractPokemonController {
         PokemonList newPokeStat = new PokemonList(pokemonId, Nickname.getText(), SpeciesName.getValue().pokemonStatsId, SpeciesName.getValue().dexNr);
 
         View.TrainerView pv = new View.TrainerView();
-        pv.createPokemonLabel(newPokeStat);             // adds To ViewList
-        TrainerView.pokemonList.add(newPokeStat);       // adds To PokemonList
+        pv.createPokemonLabel(newPokeStat); // adds To ViewList
+        pokemonList.add(newPokeStat);       // adds To PokemonList
     }
 
     // Edit Pokemon
@@ -366,82 +473,120 @@ public class TrainerController extends AbstractPokemonController {
 
     private void deletePokemonFromPokemonList() {
         int index = 0;
-        for (PokemonList pokemon : TrainerView.pokemonList) {
+        for (PokemonList pokemon : pokemonList) {
             if (pokemon.pokemonId == pokemonId) {
                 break;
             }
             index++;
         }
-        TrainerView.pokemonList.remove(index);
+        pokemonList.remove(index);
     }
 
     // -------------------------- Options-Trainer --------------------------
     public void createTrainer() {
-        String nameOfTrainer = TrainerName.getText();
+        int trainerId = 0;
+        int routeId = 0;
+        String nameOfTrainer = "";
+        int fightNumber = 0;
+        boolean foughtAlready = false;
 
-        if (nameOfTrainer.length() > 0) {
-            Data.dataSingleton data = Data.dataSingleton.getInstance();
-            API.Database dbAPI = new API.Database();
+        try {
+            nameOfTrainer = TrainerName.getText();
 
-            // Trainer
-            int routeId = Route.getValue().routeId;
-            int fightNumber = Integer.parseInt(FightNumber.getText());
-            boolean foughtAlready = FoughtAlready.getValue().equals("True");
+            if (nameOfTrainer.length() > 0) {
+                Data.dataSingleton data = Data.dataSingleton.getInstance();
+                API.Database dbAPI = new API.Database();
 
-            int trainerId = dbAPI.addTrainer(data.getGameName(), routeId, nameOfTrainer, fightNumber, foughtAlready, trainerSpriteId,
-                    pokemon1.pokemonId, pokemon2.pokemonId, pokemon3.pokemonId, pokemon4.pokemonId, pokemon5.pokemonId, pokemon6.pokemonId);
+                // Trainer
+                routeId = Route.getValue().routeId;
+                fightNumber = Integer.parseInt(FightNumber.getText());
+                foughtAlready = FoughtAlready.getValue().equals("True");
 
-            if (trainerId > 0) {
-                addTrainerToList(trainerId, routeId, nameOfTrainer, fightNumber, foughtAlready);
+                trainerId = dbAPI.addTrainer(data.getGameName(), routeId, nameOfTrainer, fightNumber, foughtAlready, trainerSpriteId,
+                        pokemon1.pokemonId, pokemon2.pokemonId, pokemon3.pokemonId, pokemon4.pokemonId, pokemon5.pokemonId, pokemon6.pokemonId);
             }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        if (trainerId > 0) {
+            BorderShadow light = new BorderShadow(CreateTrainerButton);
+            light.playFromStart(); // Animation
+
+            addTrainerToList(trainerId, routeId, nameOfTrainer, fightNumber, foughtAlready);
+        } else {
+            ShakeTransition anim = new ShakeTransition(CreateTrainerButton);
+            anim.playFromStart();
         }
     }
 
     public void editTrainer() {
-        String nameOfTrainer = TrainerName.getText();
+        API.Database dbAPI = new API.Database();
+        boolean result = false;
+        int fightNumber = 0;
+        String nameOfTrainer = "";
 
-        if (nameOfTrainer.length() > 0) {
-            API.Database dbAPI = new API.Database();
+        try {
+            nameOfTrainer = TrainerName.getText();
 
-            // Trainer
-            int routeId = Route.getValue().routeId;
-            int fightNumber = Integer.parseInt(FightNumber.getText());
-            boolean foughtAlready = FoughtAlready.getValue().equals("True");
+            if (nameOfTrainer.length() > 0) {
+                // Trainer
+                int routeId = Route.getValue().routeId;
+                fightNumber = Integer.parseInt(FightNumber.getText());
+                boolean foughtAlready = FoughtAlready.getValue().equals("True");
 
-            boolean result = dbAPI.updateTrainer(trainerId, routeId, nameOfTrainer, fightNumber, foughtAlready, trainerSpriteId,
-                    pokemon1.pokemonId, pokemon2.pokemonId, pokemon3.pokemonId, pokemon4.pokemonId, pokemon5.pokemonId, pokemon6.pokemonId);
-
-            if (result) {
-                // Update Label
-                String pokeSpritePath = dbAPI.getImagePathFromSpriteID(trainerSpriteId);
-                trainerSpriteLabel.setStyle("-fx-background-image: url(" + this.getClass().getResource(pokeSpritePath) + ")");
-                fightNumberLabel.setText(Integer.toString(fightNumber));
-                trainerNameLabel.setText(nameOfTrainer);
+                result = dbAPI.updateTrainer(trainerId, routeId, nameOfTrainer, fightNumber, foughtAlready, trainerSpriteId,
+                        pokemon1.pokemonId, pokemon2.pokemonId, pokemon3.pokemonId, pokemon4.pokemonId, pokemon5.pokemonId, pokemon6.pokemonId);
             }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        if (result) {
+            BorderShadow light = new BorderShadow(EditTrainerButton);
+            light.playFromStart(); // Animation
+            // Update Label
+            String pokeSpritePath = dbAPI.getImagePathFromSpriteID(trainerSpriteId);
+            trainerSpriteLabel.setStyle("-fx-background-image: url(" + this.getClass().getResource(pokeSpritePath) + ")");
+            fightNumberLabel.setText(Integer.toString(fightNumber));
+            trainerNameLabel.setText(nameOfTrainer);
+        } else {
+            ShakeTransition anim = new ShakeTransition(EditTrainerButton);
+            anim.playFromStart();
         }
     }
 
     public void deleteTrainer() {
-        if(View.TrainerView.trainerList.size() > 0) {
-            API.Database dbAPI = new API.Database();
+        API.Database dbAPI = new API.Database();
+        boolean result = false;
 
+        try {
+            if(trainerList.size() > 0) {
+                result = dbAPI.deleteOnlyTrainer(trainerId);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        if (result) {
+            BorderShadow light = new BorderShadow(DeleteTrainerButton);
+            light.playFromStart(); // Animation
+
+            removeTrainerFromLists();
+            selectNewFirstPokeStats();
+            // try to delete all the Pokemons the Trainer had
             ArrayList<Pokemon> trainerPokemons = dbAPI.getAllPokemonFromTrainer(trainerId);
-
-            boolean result = dbAPI.deleteOnlyTrainer(trainerId);
-
-            if (result) {
-                removeTrainerFromLists();
-                selectNewFirstPokeStats();
-                // try to delete all the Pokemons the Trainer had
-                for (Pokemon pokemon : trainerPokemons) {
-                    result = dbAPI.deletePokemon(pokemon.pokemonId);
-                    if (result) {
-                        selectPokemonOnTheMenu(pokemon);
-                        pokemonId = pokemon.pokemonId;
-                        removePokemonFromLists();
-                    }
+            for (Pokemon pokemon : trainerPokemons) {
+                result = dbAPI.deletePokemon(pokemon.pokemonId);
+                if (result) {
+                    selectPokemonOnTheMenu(pokemon);
+                    pokemonId = pokemon.pokemonId;
+                    removePokemonFromLists();
                 }
             }
+        } else {
+            ShakeTransition anim = new ShakeTransition(DeleteTrainerButton);
+            anim.playFromStart();
         }
     }
 
@@ -451,7 +596,7 @@ public class TrainerController extends AbstractPokemonController {
         Trainer tempTrainer = new Trainer(trainerId, routeId, nameOfTrainer, fightNumber, foughtAlready);
 
         tv.createTrainerLabel(tempTrainer);
-        TrainerView.trainerList.add(tempTrainer);
+        trainerList.add(tempTrainer);
     }
 
     // Delete Trainer
@@ -467,12 +612,12 @@ public class TrainerController extends AbstractPokemonController {
 
     private void deleteTrainerInTrainerList() {
         int index = 0;
-        for (Trainer trainer : View.TrainerView.trainerList) {
+        for (Trainer trainer : trainerList) {
             if (trainer.trainerId == trainerId) {
                 break;
             }
             index++;
         }
-        View.TrainerView.trainerList.remove(index);
+        trainerList.remove(index);
     }
 }

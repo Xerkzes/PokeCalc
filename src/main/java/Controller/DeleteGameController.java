@@ -1,5 +1,6 @@
 package Controller;
 
+import Classes.AutoBoxComplete;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
@@ -17,14 +18,11 @@ public class DeleteGameController {
     public static DeleteGameController getInstance() {
         return controller;
     }
-    @FXML
     public void initialize() {
         controller = this;
     }
 
-    @FXML
     public ComboBox<String> chooseGame;
-
     private ObservableList<String> savedTypeSettings;
 
     public void opensDeleteGameStage(Parent fxmlFile) {
@@ -41,6 +39,8 @@ public class DeleteGameController {
             chooseGame.setValue(savedTypeSettings.get(0));
             chooseGame.setItems(savedTypeSettings);
         }
+
+        new AutoBoxComplete<>(chooseGame);
 
         newGameStage.setScene(new Scene(fxmlFile));
         newGameStage.show();
