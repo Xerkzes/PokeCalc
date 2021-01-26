@@ -2,6 +2,7 @@ package Intefaces;
 
 import Classes.*;
 import Classes.Abstract.AbstractPokemonController;
+import Data.dataSingleton;
 import Utilities.Utilities;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -132,9 +133,8 @@ public interface InterfacePokemonView {
 
     // Pokemon
     default void setPokemonStats(PokemonList pokeList, AbstractPokemonController controller) {
-        Data.dataSingleton data = Data.dataSingleton.getInstance();
-        Pokemon pokemon = data.tempPokemon;
-        PokeStats pokeStats = data.pokeStats;
+        Pokemon pokemon = dataSingleton.tempPokemon;
+        PokeStats pokeStats = dataSingleton.pokeStats;
 
         if (pokeList.pokemonId > 0) pokemon = dbAPI.getPokemonFromPokemonId(pokeList.pokemonId);
         if (pokeList.pokemonStatsId > 0) pokeStats = dbAPI.getPokeStatsFromPokemonStatsId(pokeList.pokemonStatsId);

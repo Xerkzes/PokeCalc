@@ -82,6 +82,7 @@ public abstract class AbstractPokemonController {
         API.Database dbAPI = new API.Database();
 
         PokeStats tempPokeStats =  dbAPI.getPokeStatsFromPokemonStatsId(SpeciesName.getValue().pokemonStatsId);
+        Nickname.setText(tempPokeStats.nameOfPokemon);
         setBaseStats(tempPokeStats);
         calculateBaseTotal();
         calculateAndSetStats();

@@ -2,6 +2,7 @@ package View;
 
 import Classes.*;
 import Controller.TrainerController;
+import Data.dataSingleton;
 import Intefaces.InterfacePokemonView;
 import Utilities.Utilities;
 import javafx.collections.FXCollections;
@@ -258,6 +259,7 @@ public class TrainerView implements InterfacePokemonView {
         controller.whichPokemonIsOnTheLine = 1;
 
         controller.selectPokemonOnTheMenu(controller.pokemon1);
+        controller.pokemonId = controller.pokemon1.pokemonId;
 
         // set PokemonStats
         Pokemon pokemon = controller.pokemon1;
@@ -318,7 +320,7 @@ public class TrainerView implements InterfacePokemonView {
         previousPokemonBox = hbox;
     }
 
-    private void setPokemonOptions(PokemonList pokemon) {
+    public void setPokemonOptions(PokemonList pokemon) {
         if (pokemon.pokemonId > 0) {
             controller.AddPokemonButton.setDisable(true);
             controller.EditPokemonButton.setDisable(false);
@@ -335,7 +337,7 @@ public class TrainerView implements InterfacePokemonView {
         Pokemon pokemon;
         // get Pokemon
         if (poke.pokemonId > 0) pokemon = dbAPI.getPokemonFromPokemonId(poke.pokemonId);
-        else pokemon = data.tempPokemon;
+        else pokemon = dataSingleton.tempPokemon;
         // get Image Path
         if (poke.pokemonId > 0) {
             int spriteId = dbAPI.getSpriteIdFromSpecificPokemon(poke.pokemonStatsId);

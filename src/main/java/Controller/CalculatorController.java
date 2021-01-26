@@ -3584,7 +3584,11 @@ public class CalculatorController {
                     Label attackLabel = new Label(attack.attackName);
                     pokemonGrid.add(attackLabel, i ,3+j);
                     GridPane.setHalignment(attackLabel, HPos.CENTER);
-                    attackLabel.setTextFill(Color.color(0, 0, 0));
+                    attackLabel.setTextFill(Color.color(0, 0, 0, 1));
+                    attackLabel.setPrefWidth(80);
+                    attackLabel.setAlignment(Pos.CENTER);
+                    // set background
+                    setAttackBackground(attackLabel, attack);
                 }
             }
         }
@@ -3602,6 +3606,30 @@ public class CalculatorController {
 
         container.getChildren().addAll(trainerImg, pokemonGrid);
         tp.setContent(container);
+    }
+
+    private void setAttackBackground(Label attackLabel, Attack attack) {
+        switch (attack.typeName) {
+            case "Ghost" -> attackLabel.setStyle("-fx-background-color: rgba(148, 0, 211, 0.5);");
+            case "Steel" -> attackLabel.setStyle("-fx-background-color: rgba(140, 146, 172, 0.5);");
+            case "Dragon" -> attackLabel.setStyle("-fx-background-color: rgba(75, 0, 130, 0.5);");
+            case "Flying" -> attackLabel.setStyle("-fx-background-color: rgba(147, 204, 234, 0.5);");
+            case "Water" -> attackLabel.setStyle("-fx-background-color: rgba(0, 127, 255, 0.5);");
+            case "Ice" -> attackLabel.setStyle("-fx-background-color: rgba(0, 255, 255, 0.5);");
+            case "Grass" -> attackLabel.setStyle("-fx-background-color: rgba(0, 255, 0, 0.5);");
+            case "Bug" -> attackLabel.setStyle("-fx-background-color: rgba(128, 128, 0, 0.5);");
+            case "Normal" -> attackLabel.setStyle("-fx-background-color: rgba(229, 229, 229, 0.8);");
+            case "Electric" -> attackLabel.setStyle("-fx-background-color: rgba(255, 255, 51, 0.5);");
+            case "Ground" -> attackLabel.setStyle("-fx-background-color: rgba(236, 213, 64, 0.5);");
+            case "Rock" -> attackLabel.setStyle("-fx-background-color: rgba(150, 75, 0, 0.5);");
+            case "Fire" -> attackLabel.setStyle("-fx-background-color: rgba(255, 103, 0, 0.5);");
+            case "Fighting" -> attackLabel.setStyle("-fx-background-color: rgba(130, 0, 0, 0.5);");
+            case "Dark" -> attackLabel.setStyle("-fx-background-color: rgba(20, 20, 20, 0.5);");
+            case "Psychic" -> attackLabel.setStyle("-fx-background-color: rgba(255, 105, 180, 0.5);");
+            case "Fairy" -> attackLabel.setStyle("-fx-background-color: rgba(249, 132, 229, 0.5);");
+            case "Poison" -> attackLabel.setStyle("-fx-background-color: rgba(150, 111, 214, 0.5);");
+        }
+
     }
 
     private void setPokemonToTrainer(ArrayList<Pokemon> pokemonList) {

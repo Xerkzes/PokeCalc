@@ -8,8 +8,8 @@ public class Main {
     }
 }
 
-// have things load in the background
-// todo -> multithreading
+// multithreading
+// todo -> have things load in the background
 
 // add Game
 // todo -> make template work

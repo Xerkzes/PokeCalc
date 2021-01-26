@@ -4,6 +4,7 @@ import Classes.*;
 import Classes.Abstract.AbstractPokemonController;
 import Classes.Animation.BorderShadow;
 import Classes.Animation.ShakeTransition;
+import Data.dataSingleton;
 import Utilities.Utilities;
 import View.PokeStatsView;
 import View.TrainerView;
@@ -299,9 +300,12 @@ public class TrainerController extends AbstractPokemonController {
                 hBox.getStyleClass().add("createPokemonHBoxActive");
                 View.TrainerView.previousPokemonBox = hBox;
                 activePokemonHBox = hBox;
+                activePokemonSprite = (Label) hBox.getChildren().get(0);
+                activePokemonNickname = (Label) hBox.getChildren().get(1);
             }
         }
     }
+
     // -------------------------- Options-Pokemon --------------------------
     public void addPokemon() {
         if (SpeciesName.getValue().pokemonStatsId > 0) {
@@ -348,6 +352,10 @@ public class TrainerController extends AbstractPokemonController {
             }
 
             if (result > 0) {
+                BorderShadow light = new BorderShadow(AddPokemonButton);
+                light.playFromStart(); // Animation
+
+                pokemonId = result;
                 addPokemonToList(result);
 
                 TrainerView tv = new TrainerView();
@@ -367,6 +375,7 @@ public class TrainerController extends AbstractPokemonController {
     public void editPokemon() {
         if (SpeciesName.getValue().pokemonStatsId > 0) {
             boolean result = false;
+            PokemonList tempPokemon = null;
 
             try {
                 API.Database dbAPI = new API.Database();
@@ -400,6 +409,8 @@ public class TrainerController extends AbstractPokemonController {
                 int attack3 = Attack3Move.getValue().attackId;
                 int attack4 = Attack4Move.getValue().attackId;
 
+                tempPokemon = new PokemonList(pokemonId,nickName,pokemonStatsId,0);
+
                 result = dbAPI.updatePokemon(pokemonId, pokemonStatsId, itemId, abilityId, natureName, pokeball, metLocation, nickName, level,
                         gender, friendship, isShiny, ivHp, ivAttack, ivDefense, ivSpecialAttack, ivSpecialDefense, ivSpeed,
                         evHp, evAttack, evDefense, evSpecialAttack, evSpecialDefense, evSpeed, attack1, attack2, attack3, attack4);
@@ -408,7 +419,11 @@ public class TrainerController extends AbstractPokemonController {
             }
 
             if (result) {
-                updateLabel();
+                BorderShadow light = new BorderShadow(EditPokemonButton);
+                light.playFromStart(); // Animation
+
+                updatePokemonInList(tempPokemon);
+                updateLabel(tempPokemon);
             } else {
                 ShakeTransition anim = new ShakeTransition(EditPokemonButton);
                 anim.playFromStart();
@@ -427,6 +442,9 @@ public class TrainerController extends AbstractPokemonController {
         }
 
         if (result) {
+            BorderShadow light = new BorderShadow(DeletePokemonButton);
+            light.playFromStart(); // Animation
+
             removePokemonFromLists();
             selectNewFirstPokemon();
         } else {
@@ -445,7 +463,18 @@ public class TrainerController extends AbstractPokemonController {
     }
 
     // Edit Pokemon
-    private void updateLabel() {
+    private void updatePokemonInList(PokemonList tempPokemon) {
+        int index = 0;
+        for (PokemonList pokemon : pokemonList) {
+            if (pokemon.pokemonId == tempPokemon.pokemonId) {
+                break;
+            }
+            index++;
+        }
+        pokemonList.set(index, tempPokemon);
+    }
+
+    private void updateLabel(PokemonList pokemon) {
         // Sprite
         API.Database dbAPI = new API.Database();
         int spriteId = dbAPI.getSpriteIdFromSpecificPokemon(SpeciesName.getValue().pokemonStatsId);
@@ -456,6 +485,8 @@ public class TrainerController extends AbstractPokemonController {
         // PokemonBox
         activePokemonSprite.setStyle("-fx-background-image: url(" + this.getClass().getResource(pokeSpritePath) + ")");
         activePokemonNickname.setText(Nickname.getText());
+        // update EventHandler to load in the right stats
+        tv.setPokemonEventHandler(activePokemonHBox, pokemon);
     }
 
     // Delete Pokemon
@@ -465,10 +496,10 @@ public class TrainerController extends AbstractPokemonController {
     }
 
     private void selectNewFirstPokemon() {
-        Data.dataSingleton data = Data.dataSingleton.getInstance();
         TrainerView tv = new TrainerView();
-        tv.setPokemon(data.pokemonList);
-        selectPokemonOnTheMenu(data.tempPokemon);
+        tv.setPokemon(dataSingleton.pokemonList);
+        selectPokemonOnTheMenu(dataSingleton.tempPokemon);
+        tv.setPokemonOptions(dataSingleton.tempPokemon);
     }
 
     private void deletePokemonFromPokemonList() {
@@ -550,6 +581,9 @@ public class TrainerController extends AbstractPokemonController {
             trainerSpriteLabel.setStyle("-fx-background-image: url(" + this.getClass().getResource(pokeSpritePath) + ")");
             fightNumberLabel.setText(Integer.toString(fightNumber));
             trainerNameLabel.setText(nameOfTrainer);
+            // update EventHandler
+            TrainerView tv = new TrainerView();
+            tv.setTrainerEventHandler(activeTrainerBox, dbAPI.getTrainerFromTrainerId(trainerId));
         } else {
             ShakeTransition anim = new ShakeTransition(EditTrainerButton);
             anim.playFromStart();
